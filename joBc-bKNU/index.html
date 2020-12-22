@@ -1,0 +1,268 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>充分利用阿里云ECS（二）：私人网盘NextCloud | Thinker&#39;s Blog</title>
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1608644435257">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="充分利用阿里云ECS（二）：私人网盘NextCloud | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="国内的网盘服务大多面向的是娱乐向功能，人们更多的把它当作大容量云端硬盘（百度网盘、阿里网盘、迅雷云盘等），而且对于私人信息，如相片等一般是不会上传到国内网盘的；国外网盘更多面向同步协作，但容量小，而且绝大多数需要科学上网才能使用，这种情况下..." />
+    <meta name="keywords" content="Cloud,Linux" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.nonfin.studio">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1608644435257" alt="">
+  </a>
+  <h1 class="site-title">
+    Thinker&#39;s Blog
+  </h1>
+  <p class="site-description">
+    这是一个兴趣使然的博客小站~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PhoenixLjw" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              充分利用阿里云ECS（二）：私人网盘NextCloud
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-12-21
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://blog.nonfin.studio/nnNjuNuwZ/" class="post-tag">
+                  # Cloud
+                </a>
+              
+                <a href="https://blog.nonfin.studio/Q-hy_6X3QP/" class="post-tag">
+                  # Linux
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/2020/12/22/11ad014808bec08a3c0e6457119db49e-image-20201222210911867-fdaffd.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>国内的网盘服务大多面向的是娱乐向功能，人们更多的把它当作大容量云端硬盘（百度网盘、阿里网盘、迅雷云盘等），而且对于私人信息，如相片等一般是不会上传到国内网盘的；国外网盘更多面向同步协作，但容量小，而且绝大多数需要科学上网才能使用，这种情况下，使用<code>NextCloud</code>搭建一个私人网盘就会很有作用。</p>
+<!-- more -->
+<p>考虑到配置难易程度以及现有的<code>Samba</code>服务器，<code>NextCloud</code>我选择使用<code>docker</code>部署。</p>
+<h3 id="安装">安装</h3>
+<p>首先需要准备<code>docker</code>，安装过程可参考以前的文章<code>Arch系Linux的深度配置</code>，这里略过不表。</p>
+<p>安装<code>NextCloud</code>需要用到两部分镜像——<code>nextcloud</code>和数据库，这里数据库我选择了<code>mysql8+</code>：</p>
+<pre><code class="language-shell"># 拉取最新的mysql镜像
+$ docker pull mysql
+
+# 拉取最新的nextcloud镜像
+$ docker pull nextcloud
+</code></pre>
+<p>需要说明的是<code>nextcloud</code>的镜像有两种，一种是<code>apache</code>版本的，另一种是需要<code>fpm</code>的，两者使用有所不同，默认安装的是<code>apache</code>的最新版本，也就是<code>offical</code>的最新版本。</p>
+<p>接下来通过命令运行两个容器：</p>
+<ul>
+<li>
+<p>mysql</p>
+<pre><code class="language-shell">$ docker run -itd \
+	--name nextcloud-mysql \
+	--restart=always \
+	-v nextcloud_mysql:/var/lib/mysql \
+	-e MYSQL_ROOT_PASSWORD=your_passwd \
+	-e MYSQL_DATABASE=your_database \
+	-e MYSQL_USER=your_username \
+	-e MYSQL_PASSWORD=your_user_passwd \
+	-p 3307:3306 \
+	mysql:latest
+</code></pre>
+<p>参数说明：</p>
+<ul>
+<li><strong>-i</strong>：交互式操作；</li>
+<li><strong>-t</strong>：终端；</li>
+</ul>
+<ul>
+<li><strong>-d</strong>：让容器在后台运行；</li>
+<li><strong>–name</strong>：指定容器名；</li>
+<li><strong>–restart</strong>：开机自启；</li>
+<li><strong>-v</strong>：为数据库映射一个数据卷，nextcloud_mysql为本地的一个目录，这样做方便对数据进行本分和迁移，不指定如果容器需要还是会自动生成数据卷的，只不过很难找出容器对应的数据卷；</li>
+<li><strong>-e</strong>：环境变量，分别设置了root用户的密码、新建一个数据库、新建一个用户以及该用户的密码；</li>
+<li><strong>-p</strong>：是容器内部端口绑定到<strong>指定</strong>的主机端口</li>
+</ul>
+</li>
+<li>
+<p>nextcloud</p>
+<pre><code class="language-shell">$ docker run -itd \
+	--name nextcloud \
+	--restart=always \
+	-v nextcloud:/var/www/html \
+	--link nextcloud-mysql:mysql \
+	-p 4288:80 \
+	nextcloud:latest
+</code></pre>
+<p>参数说明：</p>
+<ul>
+<li><strong>–link</strong>：将两个容器连接，这样nextcloud就会直接使用mysql容器作为数据库了。</li>
+</ul>
+</li>
+</ul>
+<h3 id="配置">配置</h3>
+<p>按照上述步骤基本不会有什么问题，当然也可能出现<code>数据库就是连接不到，但是通过命令行检验都没问题</code>等等一些问题，这里我因为之前有建过一个mysql容器，因此专门为<code>NextCloud</code>建了个新的mysql容器。</p>
+<p>下面是已经配置完后的登陆页面，在初次登陆时需要配置管理员账号密码以及数据库，数据库的访问地址不需要填写<code>127.0.0.1:3306</code>之类的，只需要填写<code>mysql</code>即可（上述连接数据库中<code>nextcloud-mysql</code>映射的名称），之后等它安装完即可。</p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/2020/12/22/72d35d5a2db2c6afa09c2b2d1c18b3a5-image-20201222204446250-ac867a.png" alt="image-20201222204446250" loading="lazy"></figure>
+<p>那么还有一个要解决的问题，我物理机中的文件它docker访问不到啊？这里就需要借助上一篇文章中的<code>Samba</code>服务器了。<code>NextCloud</code>是允许挂载外部存储的，虽然性能一般，但挂载本地的<code>Samba</code>还是和直接访问没有多少区别的。</p>
+<p>首先我们需要在<code>应用</code>栏目下启动<code>外部存储</code>功能（默认关闭），我这里已经启动了：</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/2020/12/22/5316ad45d7ebb1c91c098b27eb1e9ceb-image-20201222205453675-1e2cea.png" alt="image-20201222205453675" loading="lazy"></figure>
+<p>接下来我们就可以在<code>设置</code>栏目下添加你的外部存储了：</p>
+<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/2020/12/22/6b0f2111a482afea780864c95109475c-image-20201222205758528-a444bf.png" alt="image-20201222205758528" loading="lazy"></figure>
+<p>主要需要配置的就是上图五处：</p>
+<ol>
+<li><code>NextCloud</code>中显示的文件夹名称；</li>
+<li><code>Samba</code>服务器地址，本地的话只要<code>127.0.0.1:port</code>即可，port是你设置的端口；</li>
+<li>挂载的<code>Samba</code>目录，和在Windows上一样，你需要选择一个目录进行挂载；</li>
+<li>登录用户名；</li>
+<li>登陆密码。</li>
+</ol>
+<p>这样在全部文件下就可以看到挂载的文件夹了（挂载了Album目录）：</p>
+<figure data-type="image" tabindex="4"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/2020/12/22/753f5df9ae9490ffa71e19354751e0e8-image-20201222210321637-f34277.png" alt="image-20201222210321637" loading="lazy"></figure>
+<p>更多操作可以自行探索，短暂的体验下来<code>NextCloud</code>还是挺不错的。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE">配置</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://blog.nonfin.studio/3aBQmHHNV/">
+              <h3 class="post-title">
+                充分利用阿里云ECS（一）：Samba服务器
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.nonfin.studio/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,443 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VScode + WSL打造生产力工具 | Thinker&#39;s Blog</title>
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1608644435257">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="VScode + WSL打造生产力工具 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="VScode作为一款轻量强大的编辑器，win结合WSL以及官方插件能搭建一个非常好的工作环境。
+
+
+VScode美化配置
+插件
+VScode的官方插件非常强大，想要VScode满足接下来的配置需求以及达到更好的美化效果，我们先要挑选一些非常..." />
+    <meta name="keywords" content="WSL" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.nonfin.studio">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1608644435257" alt="">
+  </a>
+  <h1 class="site-title">
+    Thinker&#39;s Blog
+  </h1>
+  <p class="site-description">
+    这是一个兴趣使然的博客小站~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PhoenixLjw" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              VScode + WSL打造生产力工具
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-01-19
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://blog.nonfin.studio/PkcnkKEm3U/" class="post-tag">
+                  # WSL
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>VScode作为一款轻量强大的编辑器，win结合WSL以及官方插件能搭建一个非常好的工作环境。</p>
+<!-- more -->
+<hr>
+<h2 id="vscode美化配置">VScode美化配置</h2>
+<h3 id="插件">插件</h3>
+<p>VScode的官方插件非常强大，想要VScode满足接下来的配置需求以及达到更好的美化效果，我们先要挑选一些非常好的官方插件。</p>
+<pre><code>Chinese (Simplified)Language Pack for Visual Studio Code #中文语言包
+Remote-WSL #用于远程连接WSL
+topper
+Guides
+Code Runner
+File Peek
+Path Intellisense
+String Manipulation
+</code></pre>
+<h3 id="用户设置">用户设置</h3>
+<pre><code class="language-json">{
+    &quot;window.zoomLevel&quot;: 1,
+    &quot;files.autoSave&quot;: &quot;afterDelay&quot;,
+    &quot;files.autoSaveDelay&quot;: 10000,
+    &quot;explorer.confirmDragAndDrop&quot;: false,
+    &quot;git.ignoreLegacyWarning&quot;: true,
+    &quot;editor.lineHeight&quot;: 20,
+    &quot;editor.fontSize&quot;: 18,
+    &quot;editor.wordWrap&quot;: &quot;on&quot;,
+    &quot;editor.formatOnSave&quot;: true,
+    &quot;python.linting.flake8Enabled&quot;: true,
+    &quot;python.linting.enabled&quot;: false,
+    //启用flake8，首先需要pip3 install flake8
+    &quot;python.formatting.provider&quot;: &quot;yapf&quot;, ///启用yapf，首先需要pip3 install yapf
+    &quot;path-intellisense.autoSlashAfterDirectory&quot;: true,
+    &quot;path-intellisense.extensionOnImport&quot;: true, // 配色方案
+    &quot;python.linting.pylintArgs&quot;: [
+        &quot;--load-plugins&quot;,
+        &quot;pylint_django&quot;,
+        &quot;--disable-msg=C0111&quot;
+    ], // 忽略的警告信息
+    // 下面是topper的插入header配置
+    &quot;topper.customTemplateParameters&quot;: [
+        {
+            &quot;personalProfile&quot;: {
+                &quot;author&quot;: &quot;Jason&quot;,
+                &quot;website&quot;: &quot;bulbasaur.github.bitbucket.yababbdadado.com&quot;,
+                &quot;copyright&quot;: &quot;None \n None&quot;,
+                &quot;license&quot;: &quot;None&quot;,
+                &quot;email&quot;: &quot;GP01214618541@163.com&quot;
+            }
+        },
+        {
+            &quot;officeProfile&quot;: {
+                &quot;author&quot;: &quot;John Doe&quot;,
+                &quot;department&quot;: &quot;Product Development&quot;,
+                &quot;email&quot;: &quot;john.doe@doejohn.com&quot;
+            }
+        }
+    ],
+    &quot;topper.headerTemplates&quot;: [
+        {
+            &quot;defaultCStyled&quot;: {
+                &quot;headerBegin&quot;: &quot;/**&quot;,
+                &quot;headerPrefix&quot;: &quot;*&quot;,
+                &quot;headerEnd&quot;: &quot;*/&quot;,
+                &quot;template&quot;: [
+                    &quot;${headerBegin}&quot;,
+                    &quot;${headerPrefix} ${fileName}&quot;,
+                    &quot;${headerPrefix} @author ${author}&quot;,
+                    &quot;${headerPrefix} @description ${description}&quot;,
+                    &quot;${headerPrefix} @created ${createdDate}&quot;,
+                    &quot;${headerPrefix} @copyright ${copyright}&quot;,
+                    &quot;${headerPrefix} @last-modified ${lastModifiedDate}&quot;,
+                    &quot;${headerEnd}&quot;
+                ]
+            }
+        },
+        {
+            &quot;python&quot;: {
+                &quot;headerBegin&quot;: &quot;# -*- coding: utf-8 -*-&quot;,
+                &quot;headerPrefix&quot;: &quot;#&quot;,
+                &quot;headerEnd&quot;: &quot;#&quot;,
+                &quot;template&quot;: [
+                    &quot;${headerBegin}&quot;,
+                    &quot;${headerPrefix} ${fileName}&quot;,
+                    &quot;${headerPrefix} @author ${author}&quot;,
+                    &quot;${headerPrefix} @description ${description}&quot;,
+                    &quot;${headerPrefix} @created ${createdDate}&quot;,
+                    &quot;${headerPrefix} @last-modified ${lastModifiedDate}&quot;,
+                    &quot;${headerEnd}&quot;
+                ]
+            }
+        }
+    ],
+    &quot;editor.fontFamily&quot;: &quot;monospace&quot;,
+    &quot;terminal.integrated.fontFamily&quot;: &quot;Consolas&quot;,
+    &quot;editor.fontWeight&quot;: &quot;500&quot;,
+    &quot;latex-workshop.view.pdf.viewer&quot;: &quot;external&quot;,
+    &quot;vsicons.dontShowNewVersionMessage&quot;: true,
+    &quot;latex-workshop.message.update.show&quot;: false,
+    &quot;workbench.colorTheme&quot;: &quot;Monokai&quot;,
+    &quot;editor.tabCompletion&quot;: &quot;on&quot;,
+    &quot;extensions.closeExtensionDetailsOnViewChange&quot;: true,
+    &quot;terminal.integrated.cursorStyle&quot;: &quot;line&quot;,
+    &quot;editor.renderIndentGuides&quot;: false,
+}
+</code></pre>
+<hr>
+<h2 id="latex工作环境">LaTeX工作环境</h2>
+<p>在做这一步前，先确保WSL中已经安装好了Texlive的相关组件。</p>
+<p>接下来安装一个官方插件<code>Latex Workshop</code></p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/image-20201201130641989.png" alt="image-20201201130641989" loading="lazy"></figure>
+<p>然后在工作区中添加如下配置：</p>
+<ul>
+<li><code>settings.json</code></li>
+</ul>
+<pre><code class="language-json">{
+    &quot;latex-workshop.latex.recipes&quot;: [
+        {
+            &quot;name&quot;: &quot;xelatex&quot;,
+            &quot;tools&quot;: [
+                &quot;xelatex&quot;
+            ]
+        },
+        {
+            &quot;name&quot;: &quot;xelatex-&gt;bibtex-&gt;exlatex*2&quot;,
+            &quot;tools&quot;: [
+                &quot;xelatex&quot;,
+                &quot;bibtex&quot;,
+                &quot;xelatex&quot;,
+                &quot;xelatex&quot;
+            ]
+        }
+    ],
+    &quot;latex-workshop.latex.tools&quot;: [
+        {
+            &quot;name&quot;: &quot;xelatex&quot;,
+            &quot;command&quot;: &quot;xelatex&quot;,
+            &quot;args&quot;: [
+                &quot;-synctex=1&quot;,
+                &quot;-interaction=nonstopmode&quot;,
+                &quot;-file-line-error&quot;,
+                &quot;%DOCFILE%&quot;
+            ]
+        },
+        {
+            &quot;name&quot;: &quot;bibtex&quot;,
+            &quot;command&quot;: &quot;bibtex&quot;,
+            &quot;args&quot;: [
+                &quot;%DOCFILE%&quot;
+            ]
+        }
+    ],
+}
+</code></pre>
+<hr>
+<h2 id="cc工作环境">C/C++工作环境</h2>
+<p>虽然可以直接用vim，不过编辑器毕竟也有诸多好处，这边就把编辑器的配置提上来：</p>
+<p>首先需要安装<code>C/C++</code>插件：</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/image-20201201130805831.png" alt="image-20201201130805831" loading="lazy"></figure>
+<p>接下来打开一个工作区文件夹，新建<code>.vscode</code>文件夹，添加如下三个文件：</p>
+<ul>
+<li><code>tasks.json</code></li>
+</ul>
+<pre><code class="language-json">{
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;tasks&quot;: [
+        {
+            &quot;type&quot;: &quot;shell&quot;,
+            &quot;label&quot;: &quot;g++ build active file&quot;,
+            &quot;command&quot;: &quot;/usr/bin/g++&quot;,
+            &quot;args&quot;: [
+                &quot;-g&quot;,
+                &quot;${file}&quot;,
+                &quot;-o&quot;,
+                &quot;${fileDirname}/${fileBasenameNoExtension}&quot;
+            ],
+            &quot;options&quot;: {
+                &quot;cwd&quot;: &quot;/usr/bin&quot;
+            },
+            &quot;problemMatcher&quot;: [
+                &quot;$gcc&quot;
+            ],
+            &quot;group&quot;: {
+                &quot;kind&quot;: &quot;build&quot;,
+                &quot;isDefault&quot;: true
+            }
+        }
+    ]
+}
+</code></pre>
+<ul>
+<li><code>launch.json</code></li>
+</ul>
+<pre><code class="language-json">{
+    &quot;version&quot;: &quot;0.2.0&quot;,
+    &quot;configurations&quot;: [
+        {
+            &quot;name&quot;: &quot;g++ build and debug active file&quot;,
+            &quot;type&quot;: &quot;cppdbg&quot;,
+            &quot;request&quot;: &quot;launch&quot;,
+            &quot;program&quot;: &quot;${fileDirname}/${fileBasenameNoExtension}&quot;,
+            &quot;args&quot;: [],
+            &quot;stopAtEntry&quot;: false,
+            &quot;cwd&quot;: &quot;${workspaceFolder}&quot;,
+            &quot;environment&quot;: [],
+            &quot;externalConsole&quot;: false,
+            &quot;MIMode&quot;: &quot;gdb&quot;,
+            &quot;setupCommands&quot;: [
+                {
+                    &quot;description&quot;: &quot;Enable pretty-printing for gdb&quot;,
+                    &quot;text&quot;: &quot;-enable-pretty-printing&quot;,
+                    &quot;ignoreFailures&quot;: true
+                }
+            ],
+            &quot;preLaunchTask&quot;: &quot;g++ build active file&quot;,
+            &quot;miDebuggerPath&quot;: &quot;/usr/bin/gdb&quot;
+        }
+    ]
+}
+</code></pre>
+<ul>
+<li><code>c_cpp_properties.json</code></li>
+</ul>
+<pre><code class="language-json">{
+    &quot;configurations&quot;: [
+        {
+            &quot;name&quot;: &quot;Linux&quot;,
+            &quot;includePath&quot;: [
+                &quot;${workspaceFolder}/**&quot;
+            ],
+            &quot;defines&quot;: [],
+            &quot;compilerPath&quot;: &quot;/usr/bin/gcc&quot;,
+            &quot;cStandard&quot;: &quot;c11&quot;,
+            &quot;cppStandard&quot;: &quot;c++17&quot;,
+            &quot;intelliSenseMode&quot;: &quot;clang-x64&quot;
+        }
+    ],
+    &quot;version&quot;: 4
+}
+</code></pre>
+<p>那么接下来就可以编辑一下hello world测试一下咯。</p>
+<hr>
+<h2 id="python">Python</h2>
+<p>python比较简单，只需要安装一个<code>Python</code>插件：</p>
+<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/image-20201201130857057.png" alt="image-20201201130857057" loading="lazy"></figure>
+<p>然后在工作区中加入如下配置即可：</p>
+<ul>
+<li><code>settings.json</code></li>
+</ul>
+<pre><code class="language-json">{
+    &quot;python.pythonPath&quot;: &quot;/usr/sbin/python&quot;,
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#vscode%E7%BE%8E%E5%8C%96%E9%85%8D%E7%BD%AE">VScode美化配置</a>
+<ul>
+<li><a href="#%E6%8F%92%E4%BB%B6">插件</a></li>
+<li><a href="#%E7%94%A8%E6%88%B7%E8%AE%BE%E7%BD%AE">用户设置</a></li>
+</ul>
+</li>
+<li><a href="#latex%E5%B7%A5%E4%BD%9C%E7%8E%AF%E5%A2%83">LaTeX工作环境</a></li>
+<li><a href="#cc%E5%B7%A5%E4%BD%9C%E7%8E%AF%E5%A2%83">C/C++工作环境</a></li>
+<li><a href="#python">Python</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://blog.nonfin.studio/Powershell-mei-hua-yu-qiang-hua/">
+              <h3 class="post-title">
+                Powershell美化与强化
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.nonfin.studio/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

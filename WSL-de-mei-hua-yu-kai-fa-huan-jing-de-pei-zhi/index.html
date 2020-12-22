@@ -1,0 +1,673 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WSL的美化与开发环境的配置 | Thinker&#39;s Blog</title>
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1608644435257">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="WSL的美化与开发环境的配置 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Linux的最佳发行版本是什么？WSL！！！
+好吧这是我口胡的，不过WSL确实在一定程度上方便了部分Linux开发，因此我也尝试了使用WSL，然后发现：真香！
+网上关于WSL的配置文档很多，不过我配过几次WSL，每次都要网上找很麻烦，因此就..." />
+    <meta name="keywords" content="WSL" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.nonfin.studio">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1608644435257" alt="">
+  </a>
+  <h1 class="site-title">
+    Thinker&#39;s Blog
+  </h1>
+  <p class="site-description">
+    这是一个兴趣使然的博客小站~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PhoenixLjw" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              WSL的美化与开发环境的配置
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-10-28
+              </span>
+              <span>
+                14 min read
+              </span>
+              
+                <a href="https://blog.nonfin.studio/PkcnkKEm3U/" class="post-tag">
+                  # WSL
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>Linux的最佳发行版本是什么？WSL！！！<br>
+好吧这是我口胡的，不过WSL确实在一定程度上方便了部分Linux开发，因此我也尝试了使用WSL，然后发现：真香！<br>
+网上关于WSL的配置文档很多，不过我配过几次WSL，每次都要网上找很麻烦，因此就把我自己的相关配置写下来，方便以后万一要重新配置使用。</p>
+<!--more-->
+<hr>
+<p><strong>这里选择的是Ubuntu子系统</strong></p>
+<p><strong>下面的操作默认在普通用户下执行，若命令前有‘#’则代表在root下进行</strong></p>
+<p><strong>以下操作来自网络以及个人亲自实践</strong></p>
+<hr>
+<h2 id="换源清华源">换源（清华源）</h2>
+<pre><code class="language-shell">$ sudo vim /etc/apt/sources.list
+</code></pre>
+<pre><code># 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+</code></pre>
+<hr>
+<h2 id="系统更新">系统更新</h2>
+<pre><code class="language-shell">$ sudo apt update
+$ sudo apt upgrade
+</code></pre>
+<hr>
+<h2 id="删除文档">删除文档</h2>
+<p>WSL不推荐安装桌面环境，因此文档等于无用，还占空间，因此选择删除</p>
+<p>根据<a href="https://wiki.ubuntu.com/ReducingDiskFootprint#Documentation">Ubuntu wiki</a>，我们可以指示<code>dpkg</code>不要安装任何文档。这样可以防止apt安装任何文档(版权信息除外)。</p>
+<pre><code class="language-shell">$ sudo vim /etc/dpkg/dpkg.cfg.d/01_nodoc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code>path-exclude /usr/share/doc/*
+# we need to keep copyright files for legal reasons 
+path-include /usr/share/doc/*/copyright 
+path-exclude /usr/share/man/* 
+path-exclude /usr/share/groff/* 
+path-exclude /usr/share/info/* 
+# lintian stuff is small, but really unnecessary 
+path-exclude /usr/share/lintian/* 
+path-exclude /usr/share/linda/*
+</code></pre>
+<p>接着手动删除已安装文档</p>
+<pre><code class="language-shell">$ sudo find /usr/share/doc -depth -type f ! -name copyright|xargs rm || true
+$ sudo find /usr/share/doc -empty|xargs rmdir || true
+$ sudo rm -rf /usr/share/man/* /usr/share/groff/* /usr/share/info/*
+$ sudo rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
+</code></pre>
+<p>当然也可以通过以下命令删除文档</p>
+<pre><code class="language-shell">$ sudo apt --purge remove ****
+</code></pre>
+<hr>
+<h2 id="开启ssh">开启ssh</h2>
+<h3 id="安装">安装</h3>
+<pre><code class="language-shell">$ sudo apt remove openssh-server 
+# 这一步是必需的
+
+$ sudo apt install openssh-server
+</code></pre>
+<hr>
+<h3 id="修改配置">修改配置</h3>
+<pre><code class="language-shell">$ sudo vim /etc/ssh/sshd_config
+</code></pre>
+<p>在其中找到并修改：</p>
+<pre><code>port 2222
+PasswordAuthentication yes
+</code></pre>
+<hr>
+<h3 id="启动">启动</h3>
+<pre><code class="language-shell">$ sudo service ssh --full-restart
+</code></pre>
+<hr>
+<h2 id="安装mysql">安装mysql</h2>
+<h3 id="安装-2">安装</h3>
+<pre><code class="language-shell">$ sudo apt install mysql-server
+</code></pre>
+<hr>
+<h3 id="配置">配置</h3>
+<p>不打算删除localhost的root账户，因此建立了一个用于一般工作使用的可远程访问的test账户</p>
+<pre><code class="language-bash">$ sudo service mysql start
+$ sudo mysql -u root -p
+</code></pre>
+<pre><code class="language-mysql">CREATE USER 'test'@'%' IDENTIFIED BY 'test';
+GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
+FLUSH PRIVILEGES;
+</code></pre>
+<hr>
+<h3 id="开启远程访问">开启远程访问</h3>
+<pre><code class="language-shell">$ sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre>
+<p>找到<code>bind-address</code>，把<code>127.0.0.1</code>改成<code>0.0.0.0</code></p>
+<hr>
+<h3 id="开启服务">开启服务</h3>
+<pre><code class="language-shell">$ sudo service mysql start
+</code></pre>
+<hr>
+<h2 id="安装redis">安装redis</h2>
+<h3 id="安装-3">安装</h3>
+<pre><code class="language-shell">$ sudo apt install redis-server
+</code></pre>
+<hr>
+<h3 id="配置远程访问">配置远程访问</h3>
+<pre><code class="language-shell">$ sudo vim /etc/redis/redis.conf
+</code></pre>
+<p>找到并注释掉下面一行，或者把<code>127.0.0.1</code>改成<code>0.0.0.0</code></p>
+<p><code>bind 127.0.0.1</code></p>
+<hr>
+<h3 id="开启服务-2">开启服务</h3>
+<pre><code class="language-shell">$ sudo service redis-server start
+</code></pre>
+<hr>
+<h2 id="中文支持和字体">中文支持和字体</h2>
+<h3 id="改系统语言为中文">改系统语言为中文</h3>
+<pre><code class="language-shell">$ sudo apt install language-pack-zh-hans
+$ sudo update-locale LANG=zh_CN.UTF-8
+</code></pre>
+<p>不推荐安装中文，若要改回英文，则输入下面指令即可</p>
+<pre><code class="language-shell">$ sudo update-locale LANG=en_US.UTF-8
+</code></pre>
+<hr>
+<h3 id="安装中文字体">安装中文字体</h3>
+<pre><code class="language-shell">$ sudo mkdir /usr/share/fonts
+$ sudo ln -s /mnt/c/Windows/Fonts /usr/share/fonts/windows
+$ sudo apt install fontconfig
+$ sudo fc-cache -fv
+</code></pre>
+<hr>
+<h2 id="安装git及配置ssh密钥连接github">安装git及配置SSH密钥连接Github</h2>
+<h3 id="安装git">安装git</h3>
+<pre><code class="language-shell">$ sudo apt install git
+</code></pre>
+<hr>
+<h3 id="设置git账户">设置git账户</h3>
+<p>执行如下两条命令设置git账户的用户名和密码：</p>
+<pre><code class="language-bash">$ git config --global user.name &quot;Your Name&quot;
+$ git config --global user.email &quot;youremail@domain.com&quot;
+</code></pre>
+<p>查看git config的信息：</p>
+<pre><code class="language-shell">$ git config --list
+</code></pre>
+<hr>
+<h3 id="生成ssh公钥摘自网络">生成SSH公钥(<a href="https://www.itfanr.cc/2017/03/03/using-ssh-key-connection-github-in-linux/">摘自网络</a>)</h3>
+<p>SSH 公钥默认储存在账户的主目录下的 <code>~/.ssh</code> 目录。先确认是否已经有一个公钥了：</p>
+<pre><code class="language-shell">$ cd ~/.ssh
+/bin/sh: cd: can't cd to /root/.ssh
+</code></pre>
+<p>主要是看是否存在 <code>id_dsa</code> 或 <code>id_rsa</code> 文件。有 <code>.pub</code> 后缀的文件就是 公钥，另一个文件则是密钥。</p>
+<h4 id="创建新的ssh密钥">创建新的SSH密钥</h4>
+<p>如果已经存在公钥，可跳过这步。如果没有，使用 <code>ssh-keygen</code> 来创建：</p>
+<pre><code class="language-shell">$ cd ~
+$ ssh-keygen -t rsa -C &quot;youremail@domain.com&quot;
+</code></pre>
+<p>示例：(<code>xxxxxx@126.com</code> 为我的账户邮箱)</p>
+<pre><code>~ # ssh-keygen -t rsa -C &quot;xxxxxx@126.com&quot;
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+# 直接回车，则将密钥按默认路径及文件名进行存储。此时也可以输入特定的文件名
+Created directory '/root/.ssh'.
+Enter passphrase (empty for no passphrase):  
+# 根据提示，你需要输入密码和确认密码。可以不填，设置为空值，直接回车
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:yFt14TcP0H+ixy9VKiILPPJ6DVevkKgrbxVFqk7mn5k xxxxxx@126.com
+The key's randomart image is:
++---[RSA 2048]----+
+|            o.   |
+|      .    . o.  |
+|     o    . o +. |
+|    .... ... ..++|
+|   . o .So .   o+|
+|  + o Bo= . + + .|
+| =   *.* +   o o |
+|  ++o o o .   . .|
+|  E=++         . |
++----[SHA256]-----+
+</code></pre>
+<p>查看生成的文件：</p>
+<pre><code class="language-shell">$ cd ~/.ssh
+
+$ ls
+id_rsa      id_rsa.pub		known_hosts
+</code></pre>
+<p>文件 <code>id_rsa.pub</code> 就是公钥。</p>
+<hr>
+<h4 id="在-gibhub-中添加你的公钥">在 GibHub 中添加你的公钥</h4>
+<p>复制公钥 <code>id_rsa.pub</code> 文件中的内容。</p>
+<p>我这里使用 <code>XShell</code> 来登录的linux服务器，可以直接复制出来。或在 <code>vim</code> 下，可通过命令 <code>ggVG</code> 全选，<code>+y</code> 复制选中内容到+寄存器，也就是系统的剪贴板，供其他程序使用。</p>
+<p>登陆Github网站，选择 <code>Settings</code> –&gt; <code>SSH and GPG keys</code> 菜单，点击 <code>New SSH key</code> 按钮。<br>
+粘贴你的密钥到 <code>Key</code> 输入框中并设置 <code>Title</code> 信息，点击 <code>Add SSH key</code> 按钮完成。</p>
+<hr>
+<h4 id="连接测试">连接测试</h4>
+<p>测试 SSH keys 是否设置成功，执行如下命令：</p>
+<pre><code class="language-shell">$ ssh -T git@github.com
+</code></pre>
+<p>当提示如下信息时，说明正常连通了github:</p>
+<pre><code>Hi xxxxxx! You've successfully authenticated, but GitHub does not provide shell access.
+</code></pre>
+<p>如果你是第一次设置连接github.com,会询问你是否继续,输入 <code>yes</code> 即可,这样就会将连接地址记录在本地:</p>
+<pre><code class="language-shell">$ ssh -T git@github.com
+The authenticity of host 'github.com (192.30.253.112)' can't be established.
+RSA key fingerprint is SHA256:nThbg6kXUpxxxxxxxxARLviKw6E5SY8.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'github.com,192.30.253.112' (RSA) to the list of known hosts.
+Hi xxxxxx! You've successfully authenticated, but GitHub does not provide shell access.
+</code></pre>
+<p>然后就可以将本地的项目用github来管理了。</p>
+<hr>
+<h4 id="出错自己遇到的问题">出错(自己遇到的问题)</h4>
+<p>如果在powershell下面已经生成过密钥，那么在测试连接时会发生如下情况：</p>
+<pre><code class="language-shell">$ ssh -T git@github.com
+
+git@github.com: Permission denied (publickey).
+</code></pre>
+<p>这时我们查看该目录下的文件就会发现：</p>
+<pre><code class="language-shell">$ ls
+known_hosts
+</code></pre>
+<p>公钥和密钥都不见了</p>
+<p>那么我们就在win下操作，将公钥和密钥中的内容复制，在WSL下创建公钥和密钥，将内容复制进去。但是，这时连接会出现以下情况：</p>
+<pre><code class="language-shell">$ ssh -T git@github.com
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0644 for '/home/ljw/.ssh/id_rsa' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key &quot;/home/ljw/.ssh/id_rsa&quot;: bad permissions
+git@github.com: Permission denied (publickey).
+</code></pre>
+<p>权限不够，那么只需要运行下面一行代码即可：</p>
+<pre><code class="language-shell">$ sudo chmod 700 id_rsa
+</code></pre>
+<p>虽然不知道什么原理。</p>
+<hr>
+<h2 id="安装zsh">安装zsh</h2>
+<h3 id="安装-4">安装</h3>
+<pre><code class="language-shell">$ sudo apt install zsh
+$ sudo chsh -s $(which zsh)
+$ sh -c &quot;$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;
+</code></pre>
+<hr>
+<h3 id="启动zsh">启动zsh</h3>
+<pre><code class="language-shell">$ sudo vim ~/.bashrc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code># Launch Zsh
+if [ -t 1 ]; 
+	then
+	exec zsh
+fi
+</code></pre>
+<hr>
+<h3 id="开机启动sshmysql和redis">开机启动ssh，mysql和redis</h3>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code>echo &quot;Detect the boot startup item&quot;
+if [ ! -e &quot;/var/run/sshd.pid&quot; ]; then
+    echo 'start sshd'
+    sudo service ssh start
+fi
+
+if test $( pgrep -f mysql | wc -l ) -lt 1
+    then
+    echo &quot;start mysql&quot;
+    sudo service mysql start
+fi
+
+if test $( pgrep -f redis | wc -l ) -lt 1
+    then
+    echo &quot;start redis&quot;
+    sudo service redis-server start
+fi
+</code></pre>
+<hr>
+<h3 id="启动显示">启动显示</h3>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code>umask 0022
+export DISPLAY=localhost:0.0
+</code></pre>
+<hr>
+<h3 id="修改wsl里面查看windows磁盘文件的颜色">修改wsl里面查看windows磁盘文件的颜色</h3>
+<pre><code class="language-shell">$ dircolors -p &gt; $HOME/.dircolors
+$ vim $HOME/.dircolors
+</code></pre>
+<p>将 STICKY_OTHER_WRITABLE 后面的数字改成02;32 OTHER_WRITABLE 后面的数字改成01;34</p>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code>eval $(dircolors -b $HOME/.dircolors)
+</code></pre>
+<hr>
+<h3 id="修改主题">修改主题</h3>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<p>将下面这一行的值改成ys（个人觉得这个主题很好）</p>
+<pre><code>ZSH_THEME=&quot;rubbyrussell&quot;
+</code></pre>
+<hr>
+<h2 id="安装miniconda">安装miniconda</h2>
+<p>虽然anaconda更省心，所有的包都有了，但是有一些可视化应用根本无法使用，因此这边选择轻量版的miniconda，当然，如果不在意这点的空间消耗的话，那就直接安装anaconda即可。</p>
+<h3 id="安装-5">安装</h3>
+<pre><code class="language-shell">$ sudo apt install wget
+$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+$ bash Miniconda3-latest-Linux-x86_64.sh
+</code></pre>
+<pre><code># 一直按回车然后输入yes
+please answer 'yes' or 'no':
+&gt;&gt;&gt; yes
+
+# 选择安装路径, 文件名前加点号表示隐藏文件
+Miniconda3 will now be installed into this location:
+&gt;&gt;&gt; ~/.miniconda3
+
+# 添加配置信息到 ~/.zshrc文件
+Do you wish the installer to initialize Miniconda3 by running conda init? [yes|no]
+[no] &gt;&gt;&gt; yes
+</code></pre>
+<pre><code class="language-shell"># 运行配置信息文件或重启电脑
+$ source ~/.zshrc
+
+# 测试是否安装成功
+$ conda --version
+
+# 若依旧不行
+$ sudo vim ~/.zshrc
+export export PATH=&quot;/home/ljw/miniconda3/bin:$PATH&quot;
+$ source ~/.zshrc
+</code></pre>
+<hr>
+<h3 id="换清华源">换清华源</h3>
+<p>个人觉得conda官方源挺快的，也就没改清华源。不过这边还是做一下记录，若需要修改，则：</p>
+<h4 id="显示所有channel">显示所有channel</h4>
+<pre><code class="language-shell">$ conda config --show
+#显示出所有conda的config信息
+
+$ conda config --show channels
+#只看channels的信息
+</code></pre>
+<hr>
+<h4 id="添加可用的清华源">添加可用的清华源</h4>
+<pre><code class="language-shell">$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+$ conda config --set show_channel_urls yes
+</code></pre>
+<p><code>conda config --set show_channel_urls yes</code>的意思是从channel中安装包时显示channel的url，这样就可以知道包的安装来源了。</p>
+<p>顺带修改一下安装前的确认</p>
+<pre><code class="language-shell">$ conda config --set always_yes false
+</code></pre>
+<p>（这里的意思是安装确认中，不默认yes，而是由我来决定）</p>
+<hr>
+<h4 id="移除清华源镜像">移除清华源镜像</h4>
+<pre><code class="language-shell">$ conda config --remove channels  https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+</code></pre>
+<hr>
+<h3 id="conda指令操作">conda指令操作</h3>
+<h4 id="基本操作">基本操作</h4>
+<p>升级全部库：<code>conda upgrade --all</code></p>
+<p>升级一个包：<code>conda update packagename</code></p>
+<p>安装包（可以同时安装多个包）：<code>conda install packagename</code></p>
+<p>安装固定版本的包：<code>conda install packagename=version</code></p>
+<p>移除一个包：<code>conda remove packagename</code></p>
+<p>查看所有包：<code>conda list</code></p>
+<p>删除没有用的包：<code>conda clean -p</code></p>
+<p>tar打包：<code>conda clean -t</code></p>
+<p>删除所有的安装包及cache：<code>conda clean -y --all</code></p>
+<hr>
+<h4 id="管理python环境">管理python环境</h4>
+<p>创建虚拟环境：<code>conda create -n env-name list of packagename</code></p>
+<p>指定python版本：<code>conda create -n env_name python2=2.7 list of packagename</code></p>
+<p>激活环境：<code>activate env_name</code></p>
+<p>退出环境：<code>deactivate env_name</code></p>
+<p>删除虚拟环境：<code>conda env remove -n env_name</code></p>
+<p>显示所有虚拟环境：<code>conda env list</code></p>
+<hr>
+<h2 id="安装jdk">安装jdk</h2>
+<p>虽然这个jdk环境不能用于直接编写代码使用，但还是可以用于运行jar包，浏览器访问没什么问题。</p>
+<p>这里选择安装openjdk-8-jdk</p>
+<pre><code class="language-shell">$ sudo apt install openjdk-8-jdk
+</code></pre>
+<p>查看java版本，检查是否安装成功</p>
+<pre><code class="language-shell">$ java -version
+</code></pre>
+<p>如果安装了多个版本的jdk，可以通过以下指令在版本之间切换：</p>
+<pre><code class="language-shell">$ sudo update-alternatives -config java
+</code></pre>
+<hr>
+<h2 id="安装gccgdb等">安装GCC，GDB等</h2>
+<p>安装gcc</p>
+<p>方法一：</p>
+<pre><code class="language-shell">$ sudo apt builed-dep gcc
+</code></pre>
+<p>方法二：</p>
+<pre><code class="language-shell">$ sudo apt install build-essential
+</code></pre>
+<p>方法三：</p>
+<pre><code class="language-shell">$ sudo apt install gcc
+</code></pre>
+<p>查看版本：</p>
+<pre><code class="language-shell">$ gcc --version
+</code></pre>
+<p>安装gdb等</p>
+<pre><code class="language-shell">$ sudo apt install gdb clang cmake
+</code></pre>
+<hr>
+<h2 id="安装texlive">安装texlive</h2>
+<p>可以选择使用<code>sudo apt install texlive-full</code>一步到位，不过会占用更多空间，毕竟一些图形化软件压根没用，所以可以选择下面的安装：</p>
+<p>安装latex：</p>
+<pre><code class="language-shell">$ sudo apt install texlive-latex-base
+</code></pre>
+<p>安装中文环境：</p>
+<pre><code class="language-shell">$ sudo apt install latex-cjk-all
+</code></pre>
+<p>安装额外包：</p>
+<pre><code class="language-shell">$ sudo apt install texlive-latex-extra
+</code></pre>
+<p>安装xelatex：</p>
+<pre><code class="language-shell">$ sudo apt install texlive-xelatex
+</code></pre>
+<p>texlive的文档占用空间很大，所以个人非常推荐先完成删除文档的操作。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E6%8D%A2%E6%BA%90%E6%B8%85%E5%8D%8E%E6%BA%90">换源（清华源）</a></li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E6%9B%B4%E6%96%B0">系统更新</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3">删除文档</a></li>
+<li><a href="#%E5%BC%80%E5%90%AFssh">开启ssh</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8">启动</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85mysql">安装mysql</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-2">安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE">配置</a></li>
+<li><a href="#%E5%BC%80%E5%90%AF%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">开启远程访问</a></li>
+<li><a href="#%E5%BC%80%E5%90%AF%E6%9C%8D%E5%8A%A1">开启服务</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85redis">安装redis</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-3">安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">配置远程访问</a></li>
+<li><a href="#%E5%BC%80%E5%90%AF%E6%9C%8D%E5%8A%A1-2">开启服务</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%AD%E6%96%87%E6%94%AF%E6%8C%81%E5%92%8C%E5%AD%97%E4%BD%93">中文支持和字体</a>
+<ul>
+<li><a href="#%E6%94%B9%E7%B3%BB%E7%BB%9F%E8%AF%AD%E8%A8%80%E4%B8%BA%E4%B8%AD%E6%96%87">改系统语言为中文</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E4%B8%AD%E6%96%87%E5%AD%97%E4%BD%93">安装中文字体</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85git%E5%8F%8A%E9%85%8D%E7%BD%AEssh%E5%AF%86%E9%92%A5%E8%BF%9E%E6%8E%A5github">安装git及配置SSH密钥连接Github</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85git">安装git</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AEgit%E8%B4%A6%E6%88%B7">设置git账户</a></li>
+<li><a href="#%E7%94%9F%E6%88%90ssh%E5%85%AC%E9%92%A5%E6%91%98%E8%87%AA%E7%BD%91%E7%BB%9C">生成SSH公钥(摘自网络)</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E7%9A%84ssh%E5%AF%86%E9%92%A5">创建新的SSH密钥</a></li>
+<li><a href="#%E5%9C%A8-gibhub-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BD%A0%E7%9A%84%E5%85%AC%E9%92%A5">在 GibHub 中添加你的公钥</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E6%B5%8B%E8%AF%95">连接测试</a></li>
+<li><a href="#%E5%87%BA%E9%94%99%E8%87%AA%E5%B7%B1%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98">出错(自己遇到的问题)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85zsh">安装zsh</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-4">安装</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8zsh">启动zsh</a></li>
+<li><a href="#%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8sshmysql%E5%92%8Credis">开机启动ssh，mysql和redis</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E6%98%BE%E7%A4%BA">启动显示</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9wsl%E9%87%8C%E9%9D%A2%E6%9F%A5%E7%9C%8Bwindows%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6%E7%9A%84%E9%A2%9C%E8%89%B2">修改wsl里面查看windows磁盘文件的颜色</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98">修改主题</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85miniconda">安装miniconda</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-5">安装</a></li>
+<li><a href="#%E6%8D%A2%E6%B8%85%E5%8D%8E%E6%BA%90">换清华源</a>
+<ul>
+<li><a href="#%E6%98%BE%E7%A4%BA%E6%89%80%E6%9C%89channel">显示所有channel</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%8F%AF%E7%94%A8%E7%9A%84%E6%B8%85%E5%8D%8E%E6%BA%90">添加可用的清华源</a></li>
+<li><a href="#%E7%A7%BB%E9%99%A4%E6%B8%85%E5%8D%8E%E6%BA%90%E9%95%9C%E5%83%8F">移除清华源镜像</a></li>
+</ul>
+</li>
+<li><a href="#conda%E6%8C%87%E4%BB%A4%E6%93%8D%E4%BD%9C">conda指令操作</a>
+<ul>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C">基本操作</a></li>
+<li><a href="#%E7%AE%A1%E7%90%86python%E7%8E%AF%E5%A2%83">管理python环境</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85jdk">安装jdk</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85gccgdb%E7%AD%89">安装GCC，GDB等</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85texlive">安装texlive</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.nonfin.studio/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

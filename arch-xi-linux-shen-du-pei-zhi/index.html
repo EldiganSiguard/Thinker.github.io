@@ -1,0 +1,1120 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Arch系Linux深度配置 | Thinker&#39;s Blog</title>
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1608644435257">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Arch系Linux深度配置 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在上手ArchLinux快一年后，我深深地被ArchLinux的强大所折服，在继Manjaro Desktop和ArchWSL后，我最终将服务器也安装成了ArchLinux。下面就来记录一下相关配置，做个备份。
+
+
+安装
+Manjaro D..." />
+    <meta name="keywords" content="Arch,Linux" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.nonfin.studio">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1608644435257" alt="">
+  </a>
+  <h1 class="site-title">
+    Thinker&#39;s Blog
+  </h1>
+  <p class="site-description">
+    这是一个兴趣使然的博客小站~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PhoenixLjw" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Arch系Linux深度配置
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-11-30
+              </span>
+              <span>
+                28 min read
+              </span>
+              
+                <a href="https://blog.nonfin.studio/2n_5lb1ip/" class="post-tag">
+                  # Arch
+                </a>
+              
+                <a href="https://blog.nonfin.studio/Q-hy_6X3QP/" class="post-tag">
+                  # Linux
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>在上手ArchLinux快一年后，我深深地被ArchLinux的强大所折服，在继Manjaro Desktop和ArchWSL后，我最终将服务器也安装成了ArchLinux。下面就来记录一下相关配置，做个备份。</p>
+<!-- more -->
+<hr>
+<h2 id="安装">安装</h2>
+<h3 id="manjaro-desktop">Manjaro Desktop</h3>
+<p>烧录LiveCD的过程直接掠过（这里推荐使用新工具Ventoy2Disk）。烧录完成后用USB启动，进入一开始的grub界面，如果你的电脑是双显卡，那么推荐在这里选择non-free闭源驱动，manjaro会帮你直接处理好双显卡驱动问题。</p>
+<p>进入LiveCD体验界面后，一路安装，在分区这里，我是拿了一整块硬盘给它的，和Windows的硬盘完全隔离，所以我的/boot-efi分区没有挂在在Windows上，这样硬盘拆下来也随时用，否则别的电脑是识别不出这块硬盘的。关于分区，首先记得创建分区表，推荐选GPT，MBR的只能建立四个主分区，对我来说是不够的，尤其是/boot-efi已经占掉一个分区的情况下。</p>
+<p>我的分区安排如下（硬盘为256G）：</p>
+<ul>
+<li>
+<p>/boot-efi	100M	Fat32<br>
+让电脑能够识别到这块硬盘并以能这块硬盘启动的分区，好像不可少于100M，否则也会识别失败；不确定能不能不单独分出来，直接放到/boot分区上，似乎可行，但是我之前好像失败过，存疑；</p>
+</li>
+<li>
+<p>/boot		500M	ext4<br>
+引导分区，grub、kernel等都放在这个分区，500M足够了，除非你准备装7-8个kernel；</p>
+</li>
+<li>
+<p>/			50G		ext4<br>
+根目录，20G一般也够用了，不过考虑到会用redshift以及可能会装不少大软件，就多给一些空间。其中有人提到过不要把/usr目录单独分区，否则后果自负，我没试过，仅作参考；</p>
+</li>
+<li>
+<p>/home		剩下全部 XFS<br>
+用户目录，用于存放个人文件以及部分应用安装位置，单独分区的意义就是可以保留/home分区重装系统，包括换不同的Linux发行版，/home都能无缝切换；</p>
+</li>
+<li>
+<p>swaplinux	8G<br>
+交换分区，可以看做是用来当内存的存在，一般是内存大小的1-1.5倍，不过大多数时候8G足够了；</p>
+</li>
+</ul>
+<p>之后就是一路默认，等候安装完。</p>
+<h3 id="archwsl">ArchWSL</h3>
+<p>https://github.com/yuk7/ArchWSL</p>
+<p>按照上述进行配置即可，WSL个人不推荐安装manjaro。</p>
+<p>个人推荐安装appx版本的，不推荐scoop安装（release版本更新容易出问题，我更新过几次都失败的）。</p>
+<h3 id="服务器端archlinux">服务器端ArchLinux</h3>
+<p>https://github.com/drizzt/vps2arch</p>
+<p>由于某些原因（习惯了Arch系+某些发行版存在的各种令人难受的问题），最终迫使我将云服务器安装成了Arch，最简单的方法就是通过上面的方式直接安装，那些在虚拟机中安装然后打包成镜像上传的看着过于麻烦就没试。</p>
+<hr>
+<h2 id="镜像源">镜像源</h2>
+<h3 id="添加官方软件仓库">添加官方软件仓库</h3>
+<h4 id="multilib">Multilib</h4>
+<p>编辑<code>/etc/pacman.conf</code>，将相关注释去掉即可。</p>
+<p><strong>Tips: 此配置文件中的<code>Misc Option</code>下有一些可选工程，例如去掉<code>Color</code>前的注释会有惊喜。</strong></p>
+<p><em><strong>下面是官方仓库切换国内镜像源：</strong></em></p>
+<h4 id="manjaro-desktop-2">Manjaro Desktop</h4>
+<p>pacman能够测试不同源的速度并给它们排名，从中选择一个快的即可。</p>
+<pre><code class="language-shell">$ sudo pacman-mirrors -i -c China -m rank
+$ sudo pacman -Syyu
+</code></pre>
+<p>选择几个比较快的源即可。等待它更新完，一般来说下载量在1～2G，实际安装量大约在5～7G（如果安装的是刚刚发布不超过一天的新版本可能几乎不要更新）。</p>
+<h4 id="arch">Arch</h4>
+<p>由于我安装的Arch都是没有图形界面的，所以不能通过上面的方法换源，不过Arch有一个官方软件<code>Reflector</code>可以给镜像源测试排名，比较好用，可以用这个。详情参考<a href="https://wiki.archlinux.org/index.php/Reflector">ArchWiki</a>。</p>
+<h3 id="添加非官方仓库">添加非官方仓库</h3>
+<h4 id="archlinuxcn">archlinuxcn</h4>
+<p>此源是Arch Linux中文社区仓库，需要注意，里面的软件没有为Manjaro进行完全适配，Manjaro使用这个仓库有可能出问题，例如软件无法启动等，这是因为这个源里的软件是为Arch编译打包的，Manjaro由于更新策略原因，会比Arch慢半个月左右，会出现某些包的版本问题。</p>
+<p>编辑<code>/etc/pacman.conf</code>，加入以下内容：</p>
+<pre><code>[archlinuxcn]
+SigLevel = PackageRequired
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+</code></pre>
+<p>然后更新源以及安装archlinuxcn-keyring包并导入GPG key：</p>
+<pre><code class="language-shell">$ sudo pacman -Syy &amp;&amp; sudo pacman -S archlinuxcn-keyring
+</code></pre>
+<h4 id="blackarch">blackarch</h4>
+<p>blackarch源是Black Arch官方源，里面有丰富的渗透工具，谨慎使用。</p>
+<p>编辑<code>/etc/pacman.conf</code>，加入以下内容：</p>
+<pre><code>[blackarch]
+SigLevel = PackageRequired
+Server = https://mirrors.tuna.tsinghua.edu.cn/blackarch/$repo/os/$arch
+Server = https://mirrors.ustc.edu.cn/blackarch/$repo/os/$arch
+</code></pre>
+<p>然后安装blackarch-keyring并导入GPG key：</p>
+<pre><code class="language-shell"># Run https://blackarch.org/strap.sh as root and follow the instructions.
+$ curl -O https://blackarch.org/strap.sh
+
+# The SHA1 sum should match: 34b1a3698a4c971807fb1fe41463b9d25e1a4a09
+$ sha1sum strap.sh
+
+# Set execute bit
+$ chmod +x strap.sh
+
+# Run strap.sh
+$ ./strap.sh
+</code></pre>
+<p>再次更新源：</p>
+<pre><code class="language-shell">$ sudo pacman -Syyu
+</code></pre>
+<hr>
+<h2 id="应用部署">应用部署</h2>
+<p>下面介绍一些常用应用安装与部署过程。</p>
+<h3 id="管理工具">管理工具</h3>
+<h4 id="yay">yay</h4>
+<p>yay是一个非常方便的包管理工具，可以使用aur里的包，但仅限非root用户使用。</p>
+<pre><code class="language-shell">$ sudo pacman -S yay base-devel
+</code></pre>
+<p>添加国内源：</p>
+<pre><code class="language-bash">$ yay --save --aururl https://aur.tuna.tsinghua.edu.cn
+</code></pre>
+<h4 id="下载加速">下载加速</h4>
+<p>Axel 是一个轻量级下载程序，它和其他加速器一样，对同一个文件建立多个连接，每个连接下载单独的文件片段以更快地完成下载。</p>
+<p>Axel 支持 HTTP、HTTPS、FTP 和 FTPS 协议。它也可以使用多个镜像站点下载单个文件，所以，Axel 可以加速下载高达 40％（大约，我个人认为）。它非常轻量级，因为它没有依赖并且使用非常少的 CPU 和内存。</p>
+<p>Axel 一步到位地将所有数据直接下载到目标文件（LCTT 译注：而不是像其它的下载软件那样下载成多个文件块，然后拼接）。</p>
+<p>注意：不支持在单条命令中下载两个文件.</p>
+<ul>
+<li>安装axel</li>
+</ul>
+<pre><code class="language-shell">$ yay -S axel
+</code></pre>
+<ul>
+<li>配置pacman单线程多链接加速</li>
+</ul>
+<p>编辑pacman配置文件/etc/pacman.conf，找到Xfercommand修改成如下：</p>
+<pre><code class="language-shell"># axel 单线程多链接
+XferCommand = /usr/bin/axel -a -n 16 %u -o %o
+</code></pre>
+<ul>
+<li>更新数据源</li>
+</ul>
+<pre><code class="language-shell">$ sudo pacman -Syy
+</code></pre>
+<h4 id="tips">Tips</h4>
+<ol>
+<li>
+<p>双系统情况下，让 Manjaro 使用 LocalTime，解决与 Windows 共存主板时间冲突问题：</p>
+<pre><code class="language-shell">$ sudo timedatectl set-local-rtc true
+</code></pre>
+</li>
+<li>
+<p>ArchLinux服务器时间同步问题：</p>
+<p>使用<code>ntp</code>服务同步国内时间服务器：</p>
+<pre><code class="language-shell">$ sudo ntpdate -u ntp.aliyun.com
+$ sudo ntpd -p
+</code></pre>
+</li>
+<li>
+<p>ArchWSL无法使用<code>systemd</code></p>
+<p>见<code>archwsl</code>的<code>issues</code>。</p>
+</li>
+<li>
+<p>ArchLinux中英文都乱码。</p>
+<p>默认的<code>locale</code>是中英文都没开启的，需要进行如下操作：</p>
+<pre><code class="language-shell">$ sudo vim /etc/locale.gen
+# 去掉en_US.UTF-8和zh_CN.UTF-8前面的注释
+
+$ sudo locale-gen
+$ sudo localectl set-locale LANG=en_US.UTF-8
+
+# 查看locale
+$ locale
+$ locale -a
+</code></pre>
+</li>
+</ol>
+<hr>
+<h3 id="desktop美化">Desktop美化</h3>
+<h4 id="中文字体">中文字体</h4>
+<p>Manjaro默认的中文显示效果非常差，不美观也就罢了，还会有很多奇形怪状的字形（比如“门”，“画”等字）出现。配置字体效果非常耗费时间，如果想仔细折腾，可以参考如下几个网页：</p>
+<ol>
+<li><a href="https://wiki.archlinux.org/index.php/Localization/Simplified_Chinese_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">Localization/Simplified Chinese (简体中文)</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Font_configuration_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">Font configuration (简体中文)</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Font_Configuration/Chinese_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">Font Configuration/Chinese (简体中文)</a></li>
+</ol>
+<p>先安装如下字体：</p>
+<pre><code class="language-shell">$ yay -S ttf-roboto noto-fonts ttf-dejavu
+# 文泉驿
+$ yay -S wqy-bitmapfont wqy-microhei wqy-microhei-lite wqy-zenhei
+# 思源字体
+$ yay -S noto-fonts-cjk adobe-source-han-sans-cn-fonts adobe-source-han-serif-cn-fonts
+# 更纱黑体
+$ yay -S ttf-sarasa-gothic
+</code></pre>
+<p>接下来是关于常用Windows字体的配置，这里有两种方法，一种是安装字体，但是由于授权原因，会比较麻烦；另一种是通过配置文件将常用Windows字体映射为其他字体，比较简单但有些文件显示就很鬼畜。</p>
+<h5 id="安装windows字体">安装Windows字体</h5>
+<pre><code class="language-shell"># Windows字体，由于授权原因，直接安装肯定失败
+$ yay -S ttf-ms-win10-zh_cn
+</code></pre>
+<p>如何解决？我们只需下载一个<code>win10</code>的镜像，然后解压获取其中的<code>install.wim</code>文件，接下来我们就可以自行构建安装了。（安装其他Windows版本的字体方法类似）</p>
+<pre><code class="language-shell"># 切换到yay构建目录下
+$ cd ~/.local/share/yay/ttf-ms-win10-zh_cn
+
+# 将install.wim复制到此目录下，将镜像中的自带字体文件解压到此目录下
+$ cp $(find / -name install.wim 2&gt;/dev/null) ~/.local/share/yay/ttf-ms-win10-zh_cn
+
+# 构建安装
+$ makepkg --skipchecksums
+</code></pre>
+<h5 id="配置文件字体映射">配置文件字体映射</h5>
+<p>创建文件<code>.config/fontconfig/fonts.conf</code>，加入下面的配置：</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE fontconfig SYSTEM &quot;fonts.dtd&quot;&gt;
+
+&lt;fontconfig&gt;
+
+    &lt;its:rules xmlns:its=&quot;http://www.w3.org/2005/11/its&quot; version=&quot;1.0&quot;&gt;
+        &lt;its:translateRule translate=&quot;no&quot; selector=&quot;/fontconfig/*[not(self::description)]&quot;/&gt;
+    &lt;/its:rules&gt;
+
+    &lt;description&gt;Manjaro Font Config&lt;/description&gt;
+
+    &lt;!-- Font directory list --&gt;
+    &lt;dir&gt;/usr/share/fonts&lt;/dir&gt;
+    &lt;dir&gt;/usr/local/share/fonts&lt;/dir&gt;
+    &lt;dir prefix=&quot;xdg&quot;&gt;fonts&lt;/dir&gt;
+    &lt;dir&gt;~/.fonts&lt;/dir&gt; &lt;!-- this line will be removed in the future --&gt;
+
+    &lt;!-- 自动微调 微调 抗锯齿 内嵌点阵字体 --&gt;
+    &lt;match target=&quot;font&quot;&gt;
+        &lt;edit name=&quot;autohint&quot;&gt; &lt;bool&gt;false&lt;/bool&gt; &lt;/edit&gt;
+        &lt;edit name=&quot;hinting&quot;&gt; &lt;bool&gt;true&lt;/bool&gt; &lt;/edit&gt;
+        &lt;edit name=&quot;antialias&quot;&gt; &lt;bool&gt;true&lt;/bool&gt; &lt;/edit&gt;
+        &lt;edit name=&quot;embeddedbitmap&quot; mode=&quot;assign&quot;&gt; &lt;bool&gt;false&lt;/bool&gt; &lt;/edit&gt;
+    &lt;/match&gt;
+
+    &lt;!-- 英文默认字体使用 Roboto 和 Noto Serif ,终端使用 DejaVu Sans Mono. --&gt;
+    &lt;match&gt;
+        &lt;test qual=&quot;any&quot; name=&quot;family&quot;&gt;
+            &lt;string&gt;serif&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;prepend&quot; binding=&quot;strong&quot;&gt;
+            &lt;string&gt;Noto Serif&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+    &lt;match target=&quot;pattern&quot;&gt;
+        &lt;test qual=&quot;any&quot; name=&quot;family&quot;&gt;
+            &lt;string&gt;sans-serif&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;prepend&quot; binding=&quot;strong&quot;&gt;
+            &lt;string&gt;Roboto&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+    &lt;match target=&quot;pattern&quot;&gt;
+        &lt;test qual=&quot;any&quot; name=&quot;family&quot;&gt;
+            &lt;string&gt;monospace&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;prepend&quot; binding=&quot;strong&quot;&gt;
+            &lt;string&gt;DejaVu Sans Mono&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+
+    &lt;!-- 中文默认字体使用思源宋体,不使用 Noto Sans CJK SC 是因为这个字体会在特定情况下显示片假字. --&gt;
+    &lt;match&gt;
+        &lt;test name=&quot;lang&quot; compare=&quot;contains&quot;&gt;
+            &lt;string&gt;zh&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;test name=&quot;family&quot;&gt;
+            &lt;string&gt;serif&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;prepend&quot;&gt;
+            &lt;string&gt;Source Han Serif CN&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+    &lt;match&gt;
+        &lt;test name=&quot;lang&quot; compare=&quot;contains&quot;&gt;
+            &lt;string&gt;zh&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;test name=&quot;family&quot;&gt;
+            &lt;string&gt;sans-serif&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;prepend&quot;&gt;
+            &lt;string&gt;Source Han Sans CN&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+    &lt;match&gt;
+        &lt;test name=&quot;lang&quot; compare=&quot;contains&quot;&gt;
+            &lt;string&gt;zh&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;test name=&quot;family&quot;&gt;
+            &lt;string&gt;monospace&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;prepend&quot;&gt;
+            &lt;string&gt;Noto Sans Mono CJK SC&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+
+    &lt;!-- 把Linux没有的中文字体映射到已有字体，这样当这些字体未安装时会有替代字体 --&gt;
+    &lt;match target=&quot;pattern&quot;&gt;
+        &lt;test qual=&quot;any&quot; name=&quot;family&quot;&gt;
+            &lt;string&gt;SimHei&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;assign&quot; binding=&quot;same&quot;&gt;
+            &lt;string&gt;Source Han Sans CN&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+    &lt;match target=&quot;pattern&quot;&gt;
+        &lt;test qual=&quot;any&quot; name=&quot;family&quot;&gt;
+            &lt;string&gt;SimSun&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;assign&quot; binding=&quot;same&quot;&gt;
+            &lt;string&gt;Source Han Serif CN&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+    &lt;match target=&quot;pattern&quot;&gt;
+        &lt;test qual=&quot;any&quot; name=&quot;family&quot;&gt;
+            &lt;string&gt;SimSun-18030&lt;/string&gt;
+        &lt;/test&gt;
+        &lt;edit name=&quot;family&quot; mode=&quot;assign&quot; binding=&quot;same&quot;&gt;
+            &lt;string&gt;Source Han Serif CN&lt;/string&gt;
+        &lt;/edit&gt;
+    &lt;/match&gt;
+    
+    &lt;!-- Load local system customization file --&gt;
+    &lt;include ignore_missing=&quot;yes&quot;&gt;conf.d&lt;/include&gt;
+    &lt;!-- Font cache directory list --&gt;
+    &lt;cachedir&gt;/var/cache/fontconfig&lt;/cachedir&gt;
+    &lt;cachedir prefix=&quot;xdg&quot;&gt;fontconfig&lt;/cachedir&gt;
+    &lt;!-- will be removed in the future --&gt;
+    &lt;cachedir&gt;~/.fontconfig&lt;/cachedir&gt;
+
+    &lt;config&gt;
+        &lt;!-- Rescan in every 30s when FcFontSetList is called --&gt;
+        &lt;rescan&gt; &lt;int&gt;30&lt;/int&gt; &lt;/rescan&gt;
+    &lt;/config&gt;
+
+&lt;/fontconfig&gt;
+</code></pre>
+<h4 id="zsh美化">zsh美化</h4>
+<h5 id="切换shell为zsh">切换shell为zsh</h5>
+<ul>
+<li>
+<p>查看系统是否安装了zsh</p>
+<pre><code class="language-shell">$ bat /etc/shells
+</code></pre>
+</li>
+<li>
+<p>安装zsh</p>
+<pre><code class="language-shell">$ yay -S zsh
+</code></pre>
+</li>
+<li>
+<p>查看系统当前使用的shell</p>
+<pre><code class="language-shell">$ echo $SHELL
+</code></pre>
+</li>
+<li>
+<p>切换shell为zsh</p>
+<pre><code class="language-shell">$ chsh -s /bin/zsh
+</code></pre>
+</li>
+<li>
+<p>如果要切换回去bash：</p>
+<pre><code class="language-shell">$ chsh -s /bin/bash
+</code></pre>
+</li>
+</ul>
+<h5 id="美化配置">美化配置</h5>
+<ul>
+<li>
+<p>下载安装 oh-my-zsh</p>
+<p>由于墙的原因，可能会执行失败，请自行开代理或者改<code>hosts</code>解决。</p>
+<pre><code class="language-shell">$ wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+</code></pre>
+</li>
+<li>
+<p>安装<code>powerlevel10k</code>主题（官方主题中比较不错的有<code>ys</code>和<code>avit</code>）</p>
+<pre><code class="language-bash">$ git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+</code></pre>
+</li>
+<li>
+<p>安装autojump自动跳转插件</p>
+<pre><code class="language-bash">$ yay -S autojump
+</code></pre>
+</li>
+<li>
+<p>安装zsh-completions补全插件</p>
+<pre><code class="language-bash">$ git clone https://github.com/zsh-users/zsh-completions ~/.oh-my-zsh/custom/plugins/zsh-completions
+</code></pre>
+</li>
+<li>
+<p>安装zsh-syntax-highlighting语法高亮插件</p>
+<pre><code class="language-bash">$ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+</code></pre>
+</li>
+<li>
+<p>安装zsh-autosuggestions语法历史记录插件</p>
+<pre><code class="language-shell">$ git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+</code></pre>
+</li>
+<li>
+<p>生效</p>
+<pre><code class="language-bash">$ vim ~/.zshrc
+</code></pre>
+<p>修改下面几处内容</p>
+<pre><code># powerlevel10k主题
+ZSH_THEME=&quot;powerlevel10k/powerlevel10k&quot;
+
+# 插件
+plugins=(git docker docker-compose zsh-syntax-highlighting zsh-autosuggestions zsh-completions autojump)
+</code></pre>
+</li>
+<li>
+<p>安装自动补全插件incr(可选)</p>
+<pre><code class="language-shell">$ cd $ZSH_CUSTOM/plugins
+$ sudo mkdir incr
+$ cd incr
+$ wget http://mimosa-pudica.net/src/incr-0.2.zsh
+$ echo &quot;source $ZSH_CUSTOM/plugins/incr/incr*.zsh&quot; &gt;&gt; ${ZDOTDIR:-$HOME}/.zshrc
+</code></pre>
+</li>
+<li>
+<p>更新配置</p>
+<pre><code class="language-shell">$ source ~/.zshrc
+</code></pre>
+</li>
+<li>
+<p>Tips：zsh无法匹配<code>*</code></p>
+<p>在<code>~/.zshrc</code>中添加<code>setopt no_nomatch</code>。</p>
+</li>
+</ul>
+<h4 id="latte-dock">Latte-Dock</h4>
+<p>KDE下非常强力的dock栏工具，可以搭配全局主题进行美化。</p>
+<pre><code class="language-shell">yay -S latte-dock
+</code></pre>
+<p>然后可以右键dock栏选择布局进行自定义布局或者下载现有的布局进行DIY。</p>
+<hr>
+<h3 id="常用软件">常用软件</h3>
+<h4 id="中文输入法">中文输入法</h4>
+<p>RIME 中州韵输入法是 Linux 下广受好评的中文输入法，故选用fcitx+rime输入法：</p>
+<pre><code class="language-shell">$ yay -S fcitx-googlepinyin fcitx-im fcitx-configtool fcitx-rime fcitx-cloudpinyin fcitx-skin-material
+</code></pre>
+<p>然后修改配置文件：</p>
+<pre><code class="language-shell">$ sudo vim ~/.xprofile
+</code></pre>
+<p>添加以下内容：</p>
+<pre><code>export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=&quot;@im=fcitx&quot;
+</code></pre>
+<hr>
+<h4 id="虚拟机">虚拟机</h4>
+<p>Linux下个人用虚拟机用<code>Virtualbox</code>就足够了，因此下面的配置是针对<code>Virtualbox</code>的安装配置过程。</p>
+<ul>
+<li>
+<p>确定内核版本</p>
+<pre><code class="language-shell">$ uname -r
+</code></pre>
+</li>
+<li>
+<p>安装virtualbox</p>
+<pre><code class="language-shell">$ yay -S virtualbox
+</code></pre>
+<p><strong>这里需要选择与当前内核相同的安装包，切记不要选错了！！！</strong></p>
+</li>
+<li>
+<p>启动virtualbox</p>
+<pre><code class="language-shell">$ sudo modprobe vboxdrv
+</code></pre>
+</li>
+<li>
+<p>virtualbox和宿主机文件拖拽和共享文件夾</p>
+<p>启动系統-〉设备-〉安装增强功能，等待下载完即可。</p>
+</li>
+<li>
+<p>Windows虚拟硬盘扩容</p>
+<p>在Linux的虚拟硬盘目录下运行：</p>
+<pre><code class="language-shell">$ VBoxManage modifyhd 名字.vdi --resize 新的磁盘大小（MB）
+</code></pre>
+<p>然后打开虚拟机，打开磁盘管理，会发现未分配的磁盘，接下来就是吧这块磁盘分配一下就好了。</p>
+</li>
+<li>
+<p>压缩vdi文件</p>
+<p>如果一不小心分配大小过多的话，那么下面的命令将能够压缩vdi文件以节省空间：</p>
+<pre><code class="language-shell">$ VBoxManage modifyhd 名字.vdi --compact
+</code></pre>
+</li>
+</ul>
+<hr>
+<h4 id="日常应用">日常应用</h4>
+<pre><code class="language-shell"># WPS，先卸载掉默认安装的libre-office
+# 也可以使用网页版的谷歌文档或者Office，但是网(dai)速(li)得跟得上
+$ yay -Rsc libreoffice-fresh
+$ yay -S wps-office-cn ttf-wps-fonts
+
+# Typora，开源且非常好用的md编辑器
+$ yay -S typora
+
+# google chrome，虽然不支持硬件解码，但是比chromium-vaapi时常无法启动要好
+$ yay -S google-chrome
+
+# keepassxc本地密码管理器
+$ yay -S keepassxc
+
+# 邮件客户端，mailspring/thunderbird，mailspring现在好些邮箱不能同步了，遂改用thunderbird
+$ yay -S mailspring
+$ yay -S thunderbird
+# 自带的evolution可以考虑卸载掉（个人不是很用得来）
+$ yay -Rsc evolution
+
+# Telegram
+$ yay -S telegram-desktop
+
+# Skype
+$ yay -S skypeforlinux-stable-bin
+
+# uget+aria2下載工具
+# 将 uGet -&gt; Edit -&gt; Settings -&gt; Plug-in 中的设置设为 aria2
+$ yay -S uget aria2
+
+# qbittorrent，强大的BT客户端，下面下的是enhanced版，相对更省心一些
+$ yay -S qbittorrent-enhanced-git
+
+# 坚果云，linux上比较好的同步工具
+$ yay -S nutstore
+
+# joplin，轻量的跨平台笔记工具，支持WebDav同步
+$ yay -S joplin
+
+# onedrive，linux上的第三方Client
+# github地址：https://github.com/abraunegg/onedrive
+# 在onedrive个人版扩容10G后就可以用得比较舒心
+$ yay -S onedrive-abraunegg
+
+# FileZilla，好用的跨平台FTP客户端
+$ yay -S filezilla
+
+# qv2ray，跨平台V2ray客户端
+$ yay -S v2ray qv2ray
+
+# audacious，好用的本地音乐播放器
+$ yay -S audacious
+
+# 网易云音乐
+# 由于官方的臃肿且在KDE环境下有不少BUG，因此我选择了第三方的版本，基本功能都有
+$ yay -S netease-cloud-music-gtk
+
+# SMplayer，跨平台视频播放器
+# 基于mpv开发，相比vlc更加人性化一些，操作简单，基本功能比较完善
+$ yay -S smplayer
+</code></pre>
+<hr>
+<h3 id="开发软件">开发软件</h3>
+<h4 id="开发工具">开发工具</h4>
+<pre><code class="language-shell"># sublime-text
+$ yay -S sublime-text-3
+
+# Visual Studio Code，强大的编辑器，与sublime-text二选一即可
+$ yay -S -S visual-studio-code-bin
+
+# postman，后端开发必备工具
+$ yay -S potman-bin
+
+# Github Desktop
+$ yay -S github-desktop-bin
+# Github Cli
+$ yay -S github-cli
+
+# smartGit，一个git管理客户端
+$ yay -S smartgit
+
+# Jetbrains全家桶
+# 两种方式，通过jetbrains-toolbox安装或者直接通过仓库安装
+# 仓库安装可以通过`yay + 包名`搜索安装，记得后缀为`jre`的也安装上，可以支持字体连写
+$ yay -S jetbrains-toolbox
+
+# Dbeaver Community，Linux下比较好用的数据库管理客户端
+$ yay -S dbeaver
+
+# QTcreator，跨平台QT开发工具
+$ yay -S qucreator
+
+# TeXLive,LaTeX是学术出版的标准排版软件。可以直接从软件仓库中安装，不需要完全安装，安装基础组件以及中文语言包即可
+$ yay -S texlive-most texlive-langchinese
+
+# mycli，开源终端数据库Client，操作方式同mysql
+$ yay -S mycli
+# 通过ssh连接远程数据库
+# local-port，开放的本地端口
+# mysql-port，mysql开放的端口，默认是3306
+$ ssh -NCPf user@domain -L local-port:127.0.0.1:mysql-port
+# 之后就可以通过如下命令访问远程数据库了
+$ mycli -u username -ppasswd -h 127.0.0.1 -P local-port
+</code></pre>
+<hr>
+<h4 id="开发环境">开发环境</h4>
+<h5 id="vim">vim</h5>
+<pre><code class="language-shell">$ yay -S vim
+</code></pre>
+<p>vim增强配置，目前使用<code>EverVim</code>，github主页：https://github.com/LER0ever/EverVim</p>
+<pre><code class="language-shell"># 配置环境
+$ yay -S git python-pip ctags cmake gcc
+# 自动安装（代理 or hosts）
+$ curl -sLf https://raw.githubusercontent.com/LER0ever/EverVim/master/Boot-EverVim.sh | bash
+</code></pre>
+<h5 id="emacs">emacs</h5>
+<pre><code class="language-shell">$ yay -S emacs
+</code></pre>
+<p>emacs推荐使用现成的<code>Spacemacs</code>，官方主页：https://www.spacemacs.org</p>
+<pre><code class="language-shell">$ git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+</code></pre>
+<h5 id="java">Java</h5>
+<pre><code class="language-shell">$ yay openjdk
+</code></pre>
+<p>然后挑选需要的jdk版本下载即可。</p>
+<p>使用 <code>archlinux-java</code> 命令来管理 Java 环境。</p>
+<p>列举 Java 环境：</p>
+<pre><code class="language-bash">$ archlinux-java status
+</code></pre>
+<p>选择 Java 环境：</p>
+<pre><code class="language-bash">$ sudo archlinux-java set java-8-openjdk
+</code></pre>
+<p>安裝maven：</p>
+<pre><code class="language-shell">$ yay -S maven
+</code></pre>
+<h5 id="go">Go</h5>
+<p><a href="https://wiki.archlinux.org/index.php/Go">Go - ArchWiki</a></p>
+<pre><code class="language-bash">$ sudo pacman -S go go-tools
+</code></pre>
+<blockquote>
+<p>可选用 <code>gcc-go</code> ，但若需要使用 JetBrains 的 IDE 则必须使用 <code>go</code> ，否则 IDE 无法在 <code>/usr/lib/go</code> 下找到 Go SDK。</p>
+</blockquote>
+<p>配置环境变量 <code>GOPATH</code> ，个人偏好在用户目录下的 <code>go/</code> 文件夹放置 Go 相关文件。</p>
+<pre><code class="language-bash">$ vim ~/.zshrc  # OR ~/.bashrc OR ~/.profile
+
+export GOPATH=~/go
+export PATH=$PATH:$GOPATH/bin
+</code></pre>
+<p>由于某些特殊的原因，国内无法很好地拉取 Go 相关的软件包。建议使用 <a href="https://github.com/goproxy/goproxy.cn">goproxy/goproxy.cn</a> ，只需在拉取前输入：</p>
+<pre><code class="language-bash">$ export GOPROXY=https://goproxy.cn
+</code></pre>
+<h5 id="python">Python</h5>
+<p>除了自带的python之外，可以安装比较著名的anaconda/minniconda，个人推荐安装miniconda，但下面依旧以安装anaconda为例：</p>
+<pre><code class="language-shell">$ yay -S anaconda
+$ source /opt/anaconda/bin/activate root
+$ conda install jupyterlab # 相比jupyter notebook体验更好。
+</code></pre>
+<ul>
+<li>
+<p>添加可用的清华源</p>
+<pre><code class="language-shell">$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+$ conda config --set show_channel_urls yes
+</code></pre>
+</li>
+<li>
+<p>更新</p>
+<pre><code class="language-shell">$ conda upgrade --all
+$ conda clean -y --all
+</code></pre>
+</li>
+<li>
+<p>pip换清华源</p>
+<pre><code class="language-bash">$ vim ~/.pip/pip.conf
+
+# 添加如下内容
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre>
+</li>
+</ul>
+<h5 id="npmnodejs">npm&amp;&amp;nodejs</h5>
+<pre><code class="language-shell">$ yay -S npm nodejs
+</code></pre>
+<ul>
+<li>
+<p>国内镜像源加速</p>
+<pre><code class="language-shell">$ npm config set registry https://registry.npm.taobao.org
+</code></pre>
+</li>
+</ul>
+<h5 id="ruby">ruby</h5>
+<pre><code class="language-bash">$ yay -S ruby
+</code></pre>
+<p>要使用gem的话需要在<code>$HOME/.zshrc</code>中加入：</p>
+<pre><code class="language-txt">PATH=&quot;$(ruby -e 'print Gem.user_dir')/bin:$PATH&quot;
+</code></pre>
+<h5 id="docker">docker</h5>
+<pre><code class="language-shell">$ yay -S docker docker-compose
+
+# 启动docker
+$ sudo systemctl start docker.service
+# 允许开机自启
+$ sudo systemctl enable docker.service
+
+# 免sudo使用
+$ sudo groupadd docker     		#添加docker用户组
+$ sudo gpasswd -a $USER docker	#将登陆用户加入到docker用户组中
+$ newgrp docker					#更新用户组
+$ docker info					#测试是否可以免sudo使用
+
+# 国内镜像加速(第一个是阿里云镜像，需要注册登录)
+$ sudo vim /etc/docker/daemon.conf
+{
+	&quot;registry-mirrors&quot;: [
+    	&quot;https://71lfp1ay.mirror.aliyuncs.com&quot;,
+    	&quot;https://docker.mirrors.ustc.edu.cn&quot;,
+    	&quot;http://f1361db2.m.daocloud.io&quot;,
+    	&quot;https://registry.docker-cn.com&quot;,
+    	&quot;https://dockerhub.azk8s.cn&quot;,
+    	&quot;https://reg-mirror.qiniu.com&quot;,
+    	&quot;https://hub-mirror.c.163.com&quot;,
+    	&quot;https://mirror.ccs.tencentyun.com&quot;
+    ]
+}
+</code></pre>
+<h5 id="nginx">nginx</h5>
+<pre><code class="language-shell">$ yay -S nginx
+
+# 服务启动、开机自启、重载配置
+$ sudo systemctl start nginx.service
+$ sudo systemctl enable nginx.service
+$ sudo systemctl reload nginx.service
+
+# 检验配置是否有问题
+$ nginx -t
+</code></pre>
+<p>配置文件加载<code>/etc/nginx</code>下，开启网站的代理可以在该目录下创建<code>sites-available</code>和<code>sites-enabled</code>两个文件夹，通过<code>ln</code>创建软连接决定开启哪些网站。</p>
+<h5 id="mysqlmariadb">MySQL/MariaDB</h5>
+<p>***<u>不推荐包安装，要安装也推荐使用docker部署。</u>***下面还是放出包安装过程（以MariaDB为例）：</p>
+<pre><code class="language-shell">$ yay -S mariadb mariadb-clients
+
+# 安装成功后，根据提示，输入下列指令初始化MariaDb数据库
+$ sudo mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+
+# 一番信息自动输出完成后，执行以下代码
+$ sudo systemctl start mysqld				# 启动MariaDb
+$ sudo mysqladmin -u root password &quot;root&quot;	# 为root、用户添加密码
+$ sudo systemctl enable mysqld				# 设置mariaDb开机自启
+$ mysql -uroot -p							# 输入设置的的密码，登录数据库
+</code></pre>
+<pre><code class="language-mysql">CREATE USER 'test'@'%' IDENTIFIED BY 'test';
+GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
+FLUSH PRIVILEGES;
+</code></pre>
+<p>更改默认编码为 <code>utf8mb4</code> ：</p>
+<pre><code class="language-ini">$ sudo vim /etc/my.cnf
+
+# append following lines
+[client]
+default-character-set = utf8mb4
+
+[mysqld]
+collation_server = utf8mb4_unicode_ci
+character_set_server = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4
+</code></pre>
+<p>重启 <code>MariaDB</code> 以生效。</p>
+<h5 id="redis">redis</h5>
+<p>*<u><strong>不推荐包安装，要安装也推荐使用docker部署。</strong></u>*下面还是放出包安装过程：</p>
+<pre><code class="language-shell">$ yay -S redis redis-deaktop-manager
+
+# 启动redis
+$ sudo systemctl start redis.service
+# 允许开机自启
+$ sudo systemctl enable redis.service
+</code></pre>
+<hr>
+<h4 id="辅助工具">辅助工具</h4>
+<p>一部分是原生Linux指令的几个比较好用的替换工具，另一些是便于使用的辅助工具：</p>
+<pre><code class="language-shell"># screenfetch/neofetch查看系统信息，lolcat彩色输出
+$ yay -S screenfetch neofetch lolcat
+
+# bat替换cat，带语法高亮
+$ yay -S bat
+
+# htop替换top
+$ yay -S htop
+
+# 更强大的htop/top替代者
+$ yay -S glances
+
+# ncdu替换du
+$ yay -S ncdu
+
+# 用户友好的man page
+$ yay -S tldr
+
+# 由社区投票贡献，以用例为主的帮助系统，需要先安装ruby
+$ gem install bropages
+
+# colorls，彩色ls输出，比oh-my-zsh自带的要好，还可以结合tree
+$ gem install colorls
+
+# 命令行直接用类似man的方式查看 cppreference 手册
+$ yay -S cppman
+
+# 分屏显示diff的工具
+$ yay -S icdiff
+# 修改 git 设置，将其配置为 git diff 默认工具（也可以直接git icdiff）
+$ git config --global icdiff.options '--highlight --line-numbers'
+# 编辑~/.git-icdiff.sh，设置 icdiff 指令
+#!/bin/bash
+/usr/bin/icdiff $2 $5
+
+# dstat替代vmstat
+$ yay -S dstat
+
+# 安装 mcedit，终端下面的 NotePad++ 和 Total Commander
+$ yay -S mc
+
+# lsof
+$ yay -S lsof
+
+# ranger，终端文件管理器
+$ yay -S ranger
+
+# frp，简单好用的内网穿透客户端
+# 配置直接参考/etc/frp目录下的frp*_full.ini
+# 启动服务通过systemctl
+$ yay -S frpc frps
+
+# cmatrix，asciiquarium。sl，cowfortune等比较有趣的终端指令
+$ yay -S cmatrix
+$ yay -S asciiquarium
+$ yay -S sl
+$ yay -S cowfortune
+</code></pre>
+<hr>
+<h4 id="渗透工具">渗透工具</h4>
+<pre><code class="language-shell"># 网络抓包-wireshark
+$ yay -S wireshark-qt
+
+# SQLmap
+$ yay -S sqlmap
+
+# 渗透测试集成平台
+$ yay -S burpsuit
+
+# 网络发现和攻击界面测绘的首选工具Nmap
+$ yay -S nmap
+</code></pre>
+<hr>
+<h2 id="pacman指令">pacman指令</h2>
+<pre><code class="language-shell">pacman -Sy abc 			# 和源同步后安装名为abc的包
+pacman -S abc 			# 从本地数据库中得到abc的信息，下载安装abc包
+pacman -Sf abc 			# 强制安装包abc
+pacman -Ss abc 			# 搜索有关abc信息的包
+pacman -Si abc 			# 从数据库中搜索包abc的信息
+pacman -Q 				# 列出已经安装的软件包
+pacman -Q abc 			# 检查abc软件包是否已经安装
+pacman -Qi abc 			# 列出已安装的包abc的详细信息
+pacman -Ql abc 			# 列出abc软件包的所有文件
+pacman -Qo /path/to/abc # 列出abc文件所属的软件包
+pacman -Syu 			# 同步源，并更新系统
+pacman -Sy 				# 仅同步源
+pacman -Su 				# 更新系统
+pacman -R abc 			# 删除abc包
+pacman -Rd abc 			# 制删除被依赖的包
+pacman -Rc abc 			# 除abc包和依赖abc的包
+pacman -Rsc abc 		# 除abc包和abc依赖的包
+pacman -Sc 				# 理/var/cache/pacman/pkg目录下的旧包
+pacman -Scc 			# 除所有下载的包和数据库
+pacman -U abc 			# 装下载的abs包，或新编译的abc包
+pacman -Sd abc 			# 略依赖性问题，安装包abc
+pacman -Su --ignore foo # 级时不升级包foo
+pacman -Sg abc 			# 询abc这个包组包含的软件包
+
+#清除无用的包
+sudo pacman -R $(pacman -Qdtq)
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a>
+<ul>
+<li><a href="#manjaro-desktop">Manjaro Desktop</a></li>
+<li><a href="#archwsl">ArchWSL</a></li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFarchlinux">服务器端ArchLinux</a></li>
+</ul>
+</li>
+<li><a href="#%E9%95%9C%E5%83%8F%E6%BA%90">镜像源</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%AE%98%E6%96%B9%E8%BD%AF%E4%BB%B6%E4%BB%93%E5%BA%93">添加官方软件仓库</a>
+<ul>
+<li><a href="#multilib">Multilib</a></li>
+<li><a href="#manjaro-desktop-2">Manjaro Desktop</a></li>
+<li><a href="#arch">Arch</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E9%9D%9E%E5%AE%98%E6%96%B9%E4%BB%93%E5%BA%93">添加非官方仓库</a>
+<ul>
+<li><a href="#archlinuxcn">archlinuxcn</a></li>
+<li><a href="#blackarch">blackarch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2">应用部署</a>
+<ul>
+<li><a href="#%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7">管理工具</a>
+<ul>
+<li><a href="#yay">yay</a></li>
+<li><a href="#%E4%B8%8B%E8%BD%BD%E5%8A%A0%E9%80%9F">下载加速</a></li>
+<li><a href="#tips">Tips</a></li>
+</ul>
+</li>
+<li><a href="#desktop%E7%BE%8E%E5%8C%96">Desktop美化</a>
+<ul>
+<li><a href="#%E4%B8%AD%E6%96%87%E5%AD%97%E4%BD%93">中文字体</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85windows%E5%AD%97%E4%BD%93">安装Windows字体</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%AD%97%E4%BD%93%E6%98%A0%E5%B0%84">配置文件字体映射</a></li>
+</ul>
+</li>
+<li><a href="#zsh%E7%BE%8E%E5%8C%96">zsh美化</a>
+<ul>
+<li><a href="#%E5%88%87%E6%8D%A2shell%E4%B8%BAzsh">切换shell为zsh</a></li>
+<li><a href="#%E7%BE%8E%E5%8C%96%E9%85%8D%E7%BD%AE">美化配置</a></li>
+</ul>
+</li>
+<li><a href="#latte-dock">Latte-Dock</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6">常用软件</a>
+<ul>
+<li><a href="#%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95">中文输入法</a></li>
+<li><a href="#%E8%99%9A%E6%8B%9F%E6%9C%BA">虚拟机</a></li>
+<li><a href="#%E6%97%A5%E5%B8%B8%E5%BA%94%E7%94%A8">日常应用</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%80%E5%8F%91%E8%BD%AF%E4%BB%B6">开发软件</a>
+<ul>
+<li><a href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7">开发工具</a></li>
+<li><a href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83">开发环境</a>
+<ul>
+<li><a href="#vim">vim</a></li>
+<li><a href="#emacs">emacs</a></li>
+<li><a href="#java">Java</a></li>
+<li><a href="#go">Go</a></li>
+<li><a href="#python">Python</a></li>
+<li><a href="#npmnodejs">npm&amp;&amp;nodejs</a></li>
+<li><a href="#ruby">ruby</a></li>
+<li><a href="#docker">docker</a></li>
+<li><a href="#nginx">nginx</a></li>
+<li><a href="#mysqlmariadb">MySQL/MariaDB</a></li>
+<li><a href="#redis">redis</a></li>
+</ul>
+</li>
+<li><a href="#%E8%BE%85%E5%8A%A9%E5%B7%A5%E5%85%B7">辅助工具</a></li>
+<li><a href="#%E6%B8%97%E9%80%8F%E5%B7%A5%E5%85%B7">渗透工具</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#pacman%E6%8C%87%E4%BB%A4">pacman指令</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://blog.nonfin.studio/gal-ri-zhi-lesslesschao-dian-ji-chong-feng-wei-shi-greatergreater/">
+              <h3 class="post-title">
+                Gal日志—《超电激冲锋卫士》
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.nonfin.studio/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

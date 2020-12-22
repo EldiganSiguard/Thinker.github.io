@@ -1,0 +1,514 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Powershell美化与强化 | Thinker&#39;s Blog</title>
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1608644435257">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Powershell美化与强化 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="巨硬一直在推广Powershell以替代cmd，但是Powershell丑陋的界面实在令人难以忍受，尤其是在习惯了Linux美丽的终端界面后。如何美化Powershell？下面介绍一些方法以改善Powershell的使用体验。
+
+
+scoo..." />
+    <meta name="keywords" content="Win10" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.nonfin.studio">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1608644435257" alt="">
+  </a>
+  <h1 class="site-title">
+    Thinker&#39;s Blog
+  </h1>
+  <p class="site-description">
+    这是一个兴趣使然的博客小站~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PhoenixLjw" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Powershell美化与强化
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-11-25
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+                <a href="https://blog.nonfin.studio/nqZoB5T-tT/" class="post-tag">
+                  # Win10
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>巨硬一直在推广Powershell以替代cmd，但是Powershell丑陋的界面实在令人难以忍受，尤其是在习惯了Linux美丽的终端界面后。如何美化Powershell？下面介绍一些方法以改善Powershell的使用体验。</p>
+<!--more-->
+<hr>
+<h2 id="scoopwindows下的强大包管理器">scoop|Windows下的强大包管理器</h2>
+<p>我们熟知的Ubuntu上的<code>apt-get</code>（在Ubuntu16以上可以直接用<code>apt</code>了），MacOS上的homebrew都是很优秀的包管理工具。</p>
+<p>但是在Windows平台下，由于Windows的开放性，大家都是去各种网站上下载程序，一些软件开发环境的程序也很杂乱，到处都是各种下载链接，容易中病毒还浪费时间。所以我们有开发者想要在Windows平台上开发包管理工具---scoop。</p>
+<h3 id="安装">安装</h3>
+<ol>
+<li>
+<p>保证电脑有PowerShell 3</p>
+</li>
+<li>
+<p>如果你没有打开运行远程签名的脚本文件则会提示你输入下面的指令：</p>
+<pre><code class="language-powershell">Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+</code></pre>
+</li>
+<li>
+<p>在PowerShell下输入</p>
+<pre><code class="language-powershell">iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+</code></pre>
+</li>
+<li>
+<p>等下在下完就可以使用<code>scoop help</code>来查看命令行操作</p>
+</li>
+</ol>
+<hr>
+<h3 id="常用指令">常用指令</h3>
+<pre><code class="language-shell">alias      Manage scoop aliases
+bucket     Manage Scoop buckets
+cache      Show or clear the download cache
+checkup    Check for potential problems
+cleanup    Cleanup apps by removing old versions
+config     Get or set configuration values
+create     Create a custom app manifest
+depends    List dependencies for an app
+export     Exports (an importable) list of installed apps
+help       Show help for a command
+home       Opens the app homepage
+install    Install apps
+list       List installed apps
+reset      Reset an app to resolve conflicts
+search     Search available apps
+status     Show status and check for new app versions
+uninstall  Uninstall an app
+update     Update apps, or Scoop itself
+which      Locate a program path
+
+# 设置代理(http)
+scoop config proxy 127.0.0.1:4412
+</code></pre>
+<hr>
+<h3 id="安装软件">安装软件</h3>
+<p><code>scoop</code>安装的程序都在<code>C:\Users\xxx\scoop\apps</code>文件夹下。</p>
+<ul>
+<li>
+<p>导出软件列表</p>
+<pre><code class="language-powershell">scoop.cmd export &gt; C:/Users/***/scoop/ScoopAppList.txt
+</code></pre>
+</li>
+<li>
+<p>版本切换</p>
+<pre><code class="language-powershell">scoop reset python
+</code></pre>
+<pre><code class="language-powershell">scoop reset python27
+</code></pre>
+</li>
+</ul>
+<hr>
+<h3 id="bucket软件源">Bucket软件源</h3>
+<p>由于scoop比较小众，软件相比chocolatey较少<br>
+不过scoop有一个强大的bucket软件源策略，而且有社区来维护<br>
+常用软件基本能够找到</p>
+<ul>
+<li>
+<p>社区地址：</p>
+<p>https://github.com/rasa/scoop-directory/blob/master/by-score.md</p>
+</li>
+<li>
+<p>bucket语法：scoop bucket add [软件源名字(随意)] [源地址]</p>
+</li>
+<li>
+<p>bucket源推荐：</p>
+<p><strong>官方：</strong></p>
+<pre><code class="language-powershell">scoop bucket add main
+scoop bucket add extras
+scoop bucket add versions
+scoop bucket add nightlies
+scoop bucket add nirsoft
+scoop bucket add php
+scoop bucket add nerd-fonts
+scoop bucket add nonportable
+scoop bucket add java
+scoop bucket add games
+scoop bucket add jetbrains
+</code></pre>
+<p><strong>国内常用软件：</strong><br>
+微信、QQ、钉钉……</p>
+<pre><code class="language-powershell">scoop bucket add dorado https://github.com/h404bi/dorado
+</code></pre>
+<p><strong>其他：</strong></p>
+<pre><code class="language-powershell">scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
+</code></pre>
+</li>
+</ul>
+<hr>
+<h3 id="关于包管理">关于包管理</h3>
+<p>Windows包关系体系目前还不算完善，scoop大部分软件属于国外，下载速度并不乐观，所以scoop的学习成本并不低。如果你爱折腾，相信这是一款使用后就会爱不释手的管理器</p>
+<h3 id="美化powershell"><a href="https://www.iszy.cc/2018/05/06/beautify-powershell/">美化Powershell</a></h3>
+<p>上面已经给出了我的应用列表，接下来把其中与Powershell美化相关的列出来。</p>
+<h4 id="安装-concfg">安装 <code>concfg</code></h4>
+<p><a href="https://github.com/lukesampson/concfg">lukesampson/concfg</a> 可以用来导入和导出 Windows 控制台的设置。</p>
+<pre><code class="language-powershell">scoop install concfg
+</code></pre>
+<hr>
+<h4 id="安装-git">安装 <code>git</code></h4>
+<pre><code class="language-powershell">scoop install git
+</code></pre>
+<p>此时，<code>git</code> 的环境变量是设置在当前用户下的。如果需要设置在系统下，可以通过以下语句安装。需要使用 <code>sudo</code> 来提升权限。</p>
+<pre><code class="language-powershell">scoop install sudo
+sudo scoop install -g git
+</code></pre>
+<hr>
+<h4 id="安装-posh-git">安装 <code>posh-git</code></h4>
+<p><code>posh-git</code> 是 <code>oh-my-posh</code> 的依赖，在 <code>scoop</code> 的 <code>extras</code> 包中。</p>
+<pre><code class="language-powershell">scoop install posh-git
+</code></pre>
+<hr>
+<h4 id="安装-oh-my-posh">安装 <code>oh-my-posh</code></h4>
+<p><code>oh-my-posh</code> 在 <code>scoop</code> 的主包中，直接安装即可。这个软件能够让你的 <code>PowerShell</code> 有着接近 <code>Linux</code> 中 <code>Oh-my-zsh</code> 的效果。</p>
+<pre><code class="language-powershell">scoop install oh-my-posh
+</code></pre>
+<hr>
+<h4 id="模块的另一种安装方式">模块的另一种安装方式</h4>
+<p>用管理员运行Powershell：</p>
+<pre><code class="language-powershell">Install-Module posh-git
+Install-Module oh-my-posh
+Install-Module -Name PSReadLine -Force -SkipPublisherCheck
+Install-Module Get-ChildItemColor -AllowClobber
+Install-Module WindowsConsoleFonts
+if (!(Test-Path -Path $PROFILE )) { New-Item -Type File -Path $PROFILE -Force }
+</code></pre>
+<hr>
+<h4 id="应用配置">应用配置</h4>
+<p>新建一个 <code>1.json</code> 文件，键入如下内容，也可以根据自身需求自行修改。</p>
+<pre><code class="language-json">{  
+	&quot;cursor_size&quot;: &quot;small&quot;,  
+	&quot;command_history_length&quot;: 500,  
+	&quot;num_history_buffers&quot;: 4,  
+	&quot;command_history_no_duplication&quot;: false,  
+	&quot;quick_edit&quot;: true,  
+	&quot;insert_mode&quot;: true,  
+	&quot;load_console_IME&quot;: true,  
+	&quot;font_face&quot;: &quot;DejaVu Sans Mono for Powerline&quot;,  
+	&quot;font_true_type&quot;: true,  
+	&quot;font_size&quot;: &quot;0x18&quot;,  
+	&quot;font_weight&quot;: 0,  
+	&quot;screen_buffer_size&quot;: &quot;120x30000&quot;,  
+	&quot;window_size&quot;: &quot;120x30&quot;,  
+	&quot;fullscreen&quot;: false,  
+	&quot;popup_colors&quot;: &quot;cyan,white&quot;,  
+	&quot;screen_colors&quot;: &quot;white,black&quot;,  
+	&quot;black&quot;: &quot;#1E1E1E&quot;, 
+    	&quot;dark_blue&quot;: &quot;#2472C8&quot;,  
+    	&quot;dark_green&quot;: &quot;#0DBC79&quot;,  
+    	&quot;dark_cyan&quot;: &quot;#11A8CD&quot;,  
+    	&quot;dark_red&quot;: &quot;#CD3131&quot;,  
+    	&quot;dark_magenta&quot;: &quot;#BC3FBC&quot;,  
+    	&quot;dark_yellow&quot;: &quot;#E5E510&quot;,  
+    	&quot;gray&quot;: &quot;#E5E5E5&quot;,  
+    	&quot;dark_gray&quot;: &quot;#666666&quot;,  
+    	&quot;blue&quot;: &quot;#3B8EEA&quot;,  
+    	&quot;green&quot;: &quot;#23D18B&quot;,  
+    	&quot;cyan&quot;: &quot;#29B8DB&quot;,  
+    	&quot;red&quot;: &quot;#F14C4C&quot;,  
+    	&quot;magenta&quot;: &quot;#D670D6&quot;,  
+    	&quot;yellow&quot;: &quot;#F5F543&quot;,  
+    	&quot;white&quot;: &quot;#E5E5E5&quot;
+}
+</code></pre>
+<p>在所在文件夹处打开 <code>PowerShell</code>，输入 <code>concfg import 1.json -n</code> 后开启新 <code>PowerShell</code> 窗口可以看到显示效果已经改变。</p>
+<p>**注：**使用过程中发现，更新 <code>git</code> 后，字体会出现问题，不知道是什么原因。出现这个问题也不用担心，只需要重新执行一遍上面这个应用配置的过程即可。</p>
+<hr>
+<h4 id="启用-oh-my-posh并设置主题">启用 <code>oh-my-posh</code>并设置主题</h4>
+<p>敲 <code>$profile</code> 可以让 PowerShell 告诉我们这个文件的路径是什么。</p>
+<p>编辑该文件，如果不存在则手动创建，再其中输入</p>
+<pre><code class="language-powershell">Set-PSReadlineOption -EditMode Emacs
+Import-Module posh-git
+Import-Module oh-my-posh
+Import-Module Get-ChildItemColor
+Import-Module WindowsConsoleFonts
+Set-Alias l Get-ChildItemColor -option AllScope
+Set-Alias ls Get-ChildItemColorFormatWide -option AllScope
+Set-Theme Paradox
+</code></pre>
+<h4 id="安装powerline字体">安装powerline字体</h4>
+<p>请在这里下载 PowerLine 字体（下面命令中已有）：</p>
+<ul>
+<li><a href="https://github.com/powerline/fonts">powerline/fonts: Patched fonts for Powerline users.</a></li>
+</ul>
+<pre><code class="language-powershell"># 或者依次执行如下指令即可
+git clone https://github.com/powerline/fonts.git
+cd .\fonts\
+.\install.ps1
+cd ..
+del .\fonts\ -Recurse -Force
+</code></pre>
+<p>指令执行完后修改终端字体为<code>DejaVu Sans Mono for Powerline</code>。</p>
+<hr>
+<h2 id="cmderwindows下的强大终端"><s><a href="https://www.jeffjade.com/2016/01/13/2016-01-13-windows-software-cmder/">Cmder|Windows下的强大终端</a></s></h2>
+<p><em><strong><u>更新：本栏目可以不用看了，现在已经换到了<code>Windows Terminal</code>。</u></strong></em></p>
+<h3 id="安裝">安裝</h3>
+<p><a href="http://cmder.net/">Cmder官网</a><code>http://cmder.net/</code>。作为一个压缩档的存在, 可即压即用。你甚至可以放到USB就可以虽时带着走，连调整过的设定都会放在这个目录下，不会用到系统机码(Registry)，所以也很适合放在Dropbox / Google Drive / OneDrive共享于多台电脑。</p>
+<p>下载的时候，有两个版本，分别是mini与full版；唯一的差别在于有没有内建msysgit工具，这是Git for Windows的标准配备；全安装版 cmder 自带了 msysgit, 压缩包 23M, 除了 git 本身这个命令之外, 里面可以使用大量的 linux 命令；比如 grep, curl(没有 wget)； 像vim, grep, tar, unzip, ssh, ls, bash, perl 对于爱折腾的Coder更是痛点需求。</p>
+<hr>
+<h3 id="配置">配置</h3>
+<ol>
+<li>
+<p>把 <strong>cmder</strong> 加到环境变量<br>
+可以把<code>Cmder.exe</code>存放的目录添加到系统环境变量；加完之后,<code>Win+r</code>一下输入<code>cmder</code>,即可。</p>
+</li>
+<li>
+<p><strong>添加 cmder 到右键菜单</strong></p>
+</li>
+<li>
+<p>在某个文件夹中打开终端, 这个是一个(超级)痛点需求, 实际上上一步的把 <strong>cmder</strong> 加到环境变量就是为此服务的, 在管理员权限的终端输入以下语句即可:</p>
+<pre><code class="language-powershell">Cmder.exe /REGISTER ALL
+</code></pre>
+</li>
+<li>
+<p>搭配<code>autoHotkey</code>为Cmder配置自己喜欢的快捷键(个人用<code>Alt+r</code>)：</p>
+<pre><code class="language-powershell">!r:: run, D:\**\cmder\Cmder.exe
+</code></pre>
+</li>
+</ol>
+<hr>
+<h3 id="常用功能">常用功能</h3>
+<p>1, Cmder常用快捷键<br>
+跟一般浏览器页签操作习惯一致:</p>
+<blockquote>
+<p>可以利用<code>Tab</code>，自动路径补全(爽,赞！)；<br>
+可以利用<strong>Ctrl+T</strong>建立新页签；<br>
+利用<strong>Ctrl+W</strong>关闭页签;<br>
+还可以透过<strong>Ctrl+Tab</strong>切换页签;<br>
+<strong>Alt+F4</strong>：关闭所有页签<br>
+<strong>Alt+Shift+1</strong>：开启cmd.exe<br>
+<strong>Alt+Shift+2</strong>：开启powershell.exe<br>
+<strong>Alt+Shift+3</strong>：开启powershell.exe (系统管理员权限)<br>
+<strong>Ctrl+1</strong>：快速切换到第1个页签<br>
+<strong>Ctrl+n</strong>：快速切换到第n个页签( n值无上限)<br>
+<strong>Alt + enter</strong>： 切换到全屏状态；<br>
+<strong>Ctr+r</strong> 历史命令搜索;<br>
+<strong>End, Home, Ctrl</strong> : Traversing text with as usual on Windows</p>
+</blockquote>
+<p>2, 可在视窗内搜寻画面上出现过的任意关键字。<br>
+3, 新增页签按钮，可透过滑鼠新增页签。<br>
+4, 切换页签按钮，可透过滑鼠切换页签。<br>
+5, 锁定视窗，让视窗无法再输入。<br>
+6, 切换视窗是否提供卷轴功能，启动时可查询之前显示过的内容。<br>
+7, 按下滑鼠左键可开启系统选单，滑鼠右键可开启工具选项视窗。 Win+Alt+P ：开启工具选项视窗</p>
+<hr>
+<h2 id="基本应用安装">基本应用安装</h2>
+<h3 id="mariadb">MariaDB</h3>
+<p>虽然WSL能够支持MariaDB，不过因为没有<code>systemd</code>指令在，服务无法启动（除了Ubuntu是用<code>service</code>启动可以支持以外），而且在WSL中<code>mysqld</code>进程一般会消耗100~200M内存，而win下只要10M左右，所以果断选择安装在win下。</p>
+<pre><code class="language-powershell">scoop install mariadb
+</code></pre>
+<p>安装完成后不像Linux下可以直接指令启动，我们需要切换到<code>.\mariadb\bin</code>目录下：</p>
+<pre><code class="language-powershell">mysqld --install
+mysqld --initialized
+</code></pre>
+<p>之后去服务中开启mysql:</p>
+<pre><code>win + R 
+services.msc
+</code></pre>
+<p>然后就可以愉快地玩耍mariadb了。</p>
+<hr>
+<h3 id="redis">Redis</h3>
+<p>同MariaDB，不用Ubuntu的话没法使用，所以换到win下。</p>
+<pre><code class="language-powershell">scoop install redis
+</code></pre>
+<p>安装完成后可以使用<code>redis-server</code>运行redis。</p>
+<p>如何让redis作为服务开机自启呢？我们去服务那里，是找不到redis-server服务的，所以我们需要切换到reids安装目录：</p>
+<pre><code class="language-powershell">redis-server --service-install redis.windows-service.conf --loglevel verbose
+</code></pre>
+<p>将redis-server注册到服务里</p>
+<p>但是，由于<code>Redis</code>默认以<code>Network Service</code>用户注册服务，所以在访问非程序运行的目录时会提示无权限错误,</p>
+<p>所以我们需要到服务中找到redis，把登陆身份换成本地系统登陆，然后手动启动服务。</p>
+<p>以下是redis服务的相关指令。</p>
+<pre><code class="language-powershell"># 启动服务
+redis-server --service-start
+
+# 停止服务
+redis-server --service-stop
+
+# 卸载服务
+redis-server --service-uninstall
+</code></pre>
+<hr>
+<p><em><strong><u>更新</u></strong></em></p>
+<p>不推荐在win下安装<code>MariaDB</code>和<code>redis</code>，实在要用的话就在<code>WSL2</code>中或者<code>Docker For Windows</code>下运行吧。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#scoopwindows%E4%B8%8B%E7%9A%84%E5%BC%BA%E5%A4%A7%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8">scoop|Windows下的强大包管理器</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4">常用指令</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6">安装软件</a></li>
+<li><a href="#bucket%E8%BD%AF%E4%BB%B6%E6%BA%90">Bucket软件源</a></li>
+<li><a href="#%E5%85%B3%E4%BA%8E%E5%8C%85%E7%AE%A1%E7%90%86">关于包管理</a></li>
+<li><a href="#%E7%BE%8E%E5%8C%96powershell">美化Powershell</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-concfg">安装 <code>concfg</code></a></li>
+<li><a href="#%E5%AE%89%E8%A3%85-git">安装 <code>git</code></a></li>
+<li><a href="#%E5%AE%89%E8%A3%85-posh-git">安装 <code>posh-git</code></a></li>
+<li><a href="#%E5%AE%89%E8%A3%85-oh-my-posh">安装 <code>oh-my-posh</code></a></li>
+<li><a href="#%E6%A8%A1%E5%9D%97%E7%9A%84%E5%8F%A6%E4%B8%80%E7%A7%8D%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F">模块的另一种安装方式</a></li>
+<li><a href="#%E5%BA%94%E7%94%A8%E9%85%8D%E7%BD%AE">应用配置</a></li>
+<li><a href="#%E5%90%AF%E7%94%A8-oh-my-posh%E5%B9%B6%E8%AE%BE%E7%BD%AE%E4%B8%BB%E9%A2%98">启用 <code>oh-my-posh</code>并设置主题</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85powerline%E5%AD%97%E4%BD%93">安装powerline字体</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#cmderwindows%E4%B8%8B%E7%9A%84%E5%BC%BA%E5%A4%A7%E7%BB%88%E7%AB%AF"><s>Cmder|Windows下的强大终端</s></a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%9D">安裝</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE">配置</a></li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD">常用功能</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8%E5%AE%89%E8%A3%85">基本应用安装</a>
+<ul>
+<li><a href="#mariadb">MariaDB</a></li>
+<li><a href="#redis">Redis</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://blog.nonfin.studio/chu-ci-shang-shou-centos-7-fu-wu-qi-pei-zhi/">
+              <h3 class="post-title">
+                初次上手：CentOS 7 服务器配置
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.nonfin.studio/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

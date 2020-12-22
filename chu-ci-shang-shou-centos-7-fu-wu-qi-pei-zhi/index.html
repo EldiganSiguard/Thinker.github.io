@@ -1,0 +1,778 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>初次上手：CentOS 7 服务器配置 | Thinker&#39;s Blog</title>
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1608644435257">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="初次上手：CentOS 7 服务器配置 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="项目服务器选择了CentOS 7这个系统，我对这个系统还不算很熟悉，所以再次配置基本环境时又在网上找了很久，为了方便，这边就对基本环境的配置做一个整合笔记。
+
+
+远程连接
+我选的是阿里云，因此在此用阿里云举例。
+首先在“轻量应用服务器管理控..." />
+    <meta name="keywords" content="CentOS,Linux" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.nonfin.studio">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1608644435257" alt="">
+  </a>
+  <h1 class="site-title">
+    Thinker&#39;s Blog
+  </h1>
+  <p class="site-description">
+    这是一个兴趣使然的博客小站~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PhoenixLjw" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              初次上手：CentOS 7 服务器配置
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-11-05
+              </span>
+              <span>
+                16 min read
+              </span>
+              
+                <a href="https://blog.nonfin.studio/bd9hDMAe0/" class="post-tag">
+                  # CentOS
+                </a>
+              
+                <a href="https://blog.nonfin.studio/Q-hy_6X3QP/" class="post-tag">
+                  # Linux
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>项目服务器选择了CentOS 7这个系统，我对这个系统还不算很熟悉，所以再次配置基本环境时又在网上找了很久，为了方便，这边就对基本环境的配置做一个整合笔记。</p>
+<!--more-->
+<hr>
+<h2 id="远程连接">远程连接</h2>
+<p>我选的是阿里云，因此在此用阿里云举例。</p>
+<p>首先在“轻量应用服务器管理控制台”上选择“服务器运维”-&gt;“远程连接”-&gt;“客户端”-&gt;“设置密码”设置root密码。</p>
+<p>然后打开secureCrt，建立一个Session，选择SSH2，输入服务器公网ip，选择登入账号为root（默认为root用户，虽然可以设置登录普通用户，但是比较麻烦，这里就不折腾这个了，毕竟不重要）。</p>
+<p>双击刚刚建好的Session实现远程连接。我尽可能把所有操作在普通用户下执行，所以远程连接后，先<code>sudo su admin</code>切换到普通用户（阿里云默认普通用户为admin）。</p>
+<hr>
+<h2 id="升级系统">升级系统</h2>
+<pre><code class="language-shell">$ sudo yum update
+</code></pre>
+<p>CentOS的这一条语句就等于Ubuntu的</p>
+<pre><code class="language-shell">$ sudo apt update
+$ sudo apt upgrade
+</code></pre>
+<p>两条语句了。</p>
+<p>查看升级后的系统版本：</p>
+<pre><code class="language-shell">$ cat /etc/redhat-release 
+CentOS Linux release 7.7.1908 (Core)
+</code></pre>
+<hr>
+<h2 id="安装redis">安装redis</h2>
+<h3 id="安装">安装</h3>
+<pre><code class="language-shell">$ sudo yum install redis -y
+</code></pre>
+<hr>
+<h3 id="配置远程访问">配置远程访问</h3>
+<pre><code class="language-shell">$ sudo vim /etc/redis.conf
+</code></pre>
+<p>找到并注释掉下面一行，或者把<code>127.0.0.1</code>改成<code>0.0.0.0</code></p>
+<p><code>bind 127.0.0.1</code></p>
+<hr>
+<h3 id="开启服务并允许开机自启">开启服务并允许开机自启</h3>
+<pre><code class="language-shell">$ sudo systemctl start redis
+$ sudo systemctl enable redis
+</code></pre>
+<hr>
+<h2 id="安装mysql"><a href="https://www.cnblogs.com/starof/p/4680083.html">安装mysql</a></h2>
+<p>MariaDB数据库管理系统是MySQL的一个分支，主要由开源社区在维护，采用GPL授权许可。开发这个分支的原因之一是：甲骨文公司收购了MySQL后，有将MySQL闭源的潜在风险，因此社区采用分支的方式来避开这个风险。MariaDB的目的是完全兼容MySQL，包括API和命令行，使之能轻松成为MySQL的代替品。</p>
+<h3 id="安装-2">安装</h3>
+<pre><code class="language-shell">$ sudo yum install mariadb-server mariadb -y
+</code></pre>
+<hr>
+<h3 id="配置">配置</h3>
+<p>安装成功后启动MySQL服务：</p>
+<pre><code class="language-shell">$ sudo systemctl start mariadb
+</code></pre>
+<p>初次安装MySQL，会发现root账户是没有密码的</p>
+<pre><code class="language-shell">$ mysql
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 2
+Server version: 5.5.64-MariaDB MariaDB Server
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]&gt;
+
+</code></pre>
+<p>因此先给root账户配置密码：</p>
+<pre><code class="language-mysql">set password for 'root'@'localhost' = password('*****');
+</code></pre>
+<p>不需要重启数据库即可生效。</p>
+<p>接下来建立一个用于一般工作使用的可远程访问的test账户</p>
+<pre><code class="language-mysql">CREATE USER 'test'@'%' IDENTIFIED BY 'test';
+GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
+FLUSH PRIVILEGES;
+</code></pre>
+<hr>
+<h3 id="开启远程访问">开启远程访问</h3>
+<p>阿里云服务器的MySQL默认是不能远程访问的，因为默认防火墙里MySQL端口3306默认是不开的，需要自己添加（如下）：</p>
+<figure data-type="image" tabindex="1"><img src="/images/2019/11/05/60556f50-ff27-11e9-bbb2-eb0574b29c75.png" alt="image.png" loading="lazy"></figure>
+<hr>
+<h3 id="开启服务并允许开机自启-2">开启服务并允许开机自启</h3>
+<pre><code class="language-shell">$ sudo systemctl start mariadb
+$ sudo systemctl enable mariadb
+
+</code></pre>
+<hr>
+<h2 id="安装git及配置ssh密钥连接github">安装git及配置SSH密钥连接Github</h2>
+<h3 id="安装git">安装git</h3>
+<pre><code class="language-shell">$ sudo yum install git -y
+</code></pre>
+<hr>
+<h3 id="设置git账户">设置git账户</h3>
+<p>执行如下两条命令设置git账户的用户名和密码：</p>
+<pre><code class="language-shell">$ git config --global user.name &quot;Your Name&quot;
+$ git config --global user.email &quot;youremail@domain.com&quot;
+</code></pre>
+<p>查看git config的信息：</p>
+<pre><code class="language-shell">$ git config --list
+</code></pre>
+<hr>
+<h3 id="生成ssh公钥摘自网络">生成SSH公钥(<a href="https://www.itfanr.cc/2017/03/03/using-ssh-key-connection-github-in-linux/">摘自网络</a>)</h3>
+<p>SSH 公钥默认储存在账户的主目录下的 <code>~/.ssh</code> 目录。先确认是否已经有一个公钥了：</p>
+<pre><code class="language-shell">$ cd ~/.ssh
+/bin/sh: cd: can't cd to /root/.ssh
+
+</code></pre>
+<p>主要是看是否存在 <code>id_dsa</code> 或 <code>id_rsa</code> 文件。有 <code>.pub</code> 后缀的文件就是 公钥，另一个文件则是密钥。</p>
+<h4 id="创建新的ssh密钥">创建新的SSH密钥</h4>
+<p>如果已经存在公钥，可跳过这步。如果没有，使用 <code>ssh-keygen</code> 来创建：</p>
+<pre><code class="language-shell">$ cd ~
+$ ssh-keygen -t rsa -C &quot;youremail@domain.com&quot;
+
+</code></pre>
+<p>示例：(<code>xxxxxx@126.com</code> 为我的账户邮箱)</p>
+<pre><code>~ # ssh-keygen -t rsa -C &quot;xxxxxx@126.com&quot;
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+# 直接回车，则将密钥按默认路径及文件名进行存储。此时也可以输入特定的文件名
+Created directory '/root/.ssh'.
+Enter passphrase (empty for no passphrase):  
+# 根据提示，你需要输入密码和确认密码。可以不填，设置为空值，直接回车
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:yFt14TcP0H+ixy9VKiILPPJ6DVevkKgrbxVFqk7mn5k xxxxxx@126.com
+The key's randomart image is:
++---[RSA 2048]----+
+|            o.   |
+|      .    . o.  |
+|     o    . o +. |
+|    .... ... ..++|
+|   . o .So .   o+|
+|  + o Bo= . + + .|
+| =   *.* +   o o |
+|  ++o o o .   . .|
+|  E=++         . |
++----[SHA256]-----+
+
+</code></pre>
+<p>查看生成的文件：</p>
+<pre><code class="language-shell">$ cd ~/.ssh
+
+$ ls
+id_rsa      id_rsa.pub		known_hosts
+
+</code></pre>
+<p>文件 <code>id_rsa.pub</code> 就是公钥。</p>
+<hr>
+<h4 id="在-gibhub-中添加你的公钥">在 GibHub 中添加你的公钥</h4>
+<p>复制公钥 <code>id_rsa.pub</code> 文件中的内容。</p>
+<p>我这里使用 <code>XShell</code> 来登录的linux服务器，可以直接复制出来。或在 <code>vim</code> 下，可通过命令 <code>ggVG</code> 全选，<code>+y</code> 复制选中内容到+寄存器，也就是系统的剪贴板，供其他程序使用。</p>
+<p>登陆Github网站，选择 <code>Settings</code> –&gt; <code>SSH and GPG keys</code> 菜单，点击 <code>New SSH key</code> 按钮。<br>
+粘贴你的密钥到 <code>Key</code> 输入框中并设置 <code>Title</code> 信息，点击 <code>Add SSH key</code> 按钮完成。</p>
+<hr>
+<h4 id="连接测试">连接测试</h4>
+<p>测试 SSH keys 是否设置成功，执行如下命令：</p>
+<pre><code class="language-shell">$ ssh -T git@github.com
+
+</code></pre>
+<p>当提示如下信息时，说明正常连通了github:</p>
+<pre><code>Hi xxxxxx! You've successfully authenticated, but GitHub does not provide shell access.
+
+</code></pre>
+<p>如果你是第一次设置连接github.com,会询问你是否继续,输入 <code>yes</code> 即可,这样就会将连接地址记录在本地:</p>
+<pre><code class="language-shell">$ ssh -T git@github.com
+The authenticity of host 'github.com (192.30.253.112)' can't be established.
+RSA key fingerprint is SHA256:nThbg6kXUpxxxxxxxxARLviKw6E5SY8.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'github.com,192.30.253.112' (RSA) to the list of known hosts.
+Hi xxxxxx! You've successfully authenticated, but GitHub does not provide shell access.
+</code></pre>
+<p>然后就可以将本地的项目用github来管理了。</p>
+<hr>
+<h2 id="安装zsh">安装zsh</h2>
+<h3 id="安装-3">安装</h3>
+<pre><code class="language-shell">$ sudo yum install zsh -y
+$ sudo chsh -s $(which zsh)
+$ sh -c &quot;$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;
+</code></pre>
+<hr>
+<h3 id="启动zsh">启动zsh</h3>
+<pre><code class="language-shell">$ sudo vim ~/.bashrc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code># Launch Zsh
+if [ -t 1 ]; 
+	then
+	exec zsh
+fi
+</code></pre>
+<hr>
+<h3 id="启动显示">启动显示</h3>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code>umask 0022
+export DISPLAY=localhost:0.0
+</code></pre>
+<hr>
+<h3 id="修改wsl里面查看windows磁盘文件的颜色">修改wsl里面查看windows磁盘文件的颜色</h3>
+<pre><code class="language-shell">$ dircolors -p &gt; $HOME/.dircolors
+$ vim $HOME/.dircolors
+</code></pre>
+<p>将 STICKY_OTHER_WRITABLE 后面的数字改成02;32 OTHER_WRITABLE 后面的数字改成01;34</p>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<p>加入以下内容：</p>
+<pre><code>eval $(dircolors -b $HOME/.dircolors)
+</code></pre>
+<hr>
+<h3 id="修改主题">修改主题</h3>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<p>将下面这一行的值改成ys（个人觉得这个主题很好）</p>
+<pre><code>ZSH_THEME=&quot;rubbyrussell&quot;
+</code></pre>
+<hr>
+<h2 id="安装jdk"><a href="https://www.cnblogs.com/kevincaptain/p/10370587.html">安装jdk</a></h2>
+<p>安装之前先检查一下系统有没有自带open-jdk</p>
+<pre><code class="language-shell">$ rpm -qa |grep java
+$ rpm -qa |grep jdk
+$ rpm -qa |grep gcj
+</code></pre>
+<p>如果没有输入信息表示没有安装。</p>
+<p>如果安装可以使用<code>rpm -qa | grep java | xargs rpm -e --nodeps</code>批量卸载所有带有Java的文件。</p>
+<p>检索包含Java 1.8的列表</p>
+<pre><code class="language-shell">$ sudo yum list java-1.8*  
+</code></pre>
+<p>安装1.8.0的所有文件</p>
+<pre><code class="language-shell">$ sudo yum install java-1.8.0-openjdk\* -y
+</code></pre>
+<p>检查是否安装成功</p>
+<pre><code class="language-shell">$ java -version
+</code></pre>
+<h2 id="安装miniconda">安装miniconda</h2>
+<p>因为云服务器不打算安装GUI，所以我这里选择安装轻量的miniconda。</p>
+<h3 id="安装-4">安装</h3>
+<pre><code class="language-shell">$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+$ sh Miniconda3-latest-Linux-x86_64.sh
+</code></pre>
+<pre><code># 一直按回车然后输入yes
+please answer 'yes' or 'no':
+&gt;&gt;&gt; yes
+
+# 选择安装路径, 文件名前加点号表示隐藏文件
+Miniconda3 will now be installed into this location:
+&gt;&gt;&gt; ~/.miniconda3
+
+# 添加配置信息到 ~/.zshrc文件
+Do you wish the installer to initialize Miniconda3 by running conda init? [yes|no]
+[no] &gt;&gt;&gt; yes
+</code></pre>
+<p>操作完后发现<code>conda</code>指令没有，这时我们需要删掉已经安装好的miniconda文件夹</p>
+<pre><code class="language-shell">$ rm -rf /home/admin/miniconda3
+</code></pre>
+<p>然后重复一次安装操作即可。</p>
+<hr>
+<h3 id="换清华源">换清华源</h3>
+<p>个人觉得conda官方源挺快的，也就没改清华源。不过这边还是做一下记录，若需要修改，则：</p>
+<h4 id="显示所有channel">显示所有channel</h4>
+<pre><code class="language-shell">$ conda config --show
+#显示出所有conda的config信息
+
+$ conda config --show channels
+#只看channels的信息
+</code></pre>
+<hr>
+<h4 id="添加可用的清华源">添加可用的清华源</h4>
+<pre><code class="language-shell">$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+$ conda config --set show_channel_urls yes
+</code></pre>
+<p><code>conda config --set show_channel_urls yes</code>的意思是从channel中安装包时显示channel的url，这样就可以知道包的安装来源了。</p>
+<p>顺带修改一下安装前的确认</p>
+<pre><code class="language-shell">$ conda config --set always_yes false
+</code></pre>
+<p>（这里的意思是安装确认中，不默认yes，而是由我来决定）</p>
+<p>然后更新一下所有包</p>
+<pre><code class="language-shell">$ conda upgrade --all
+</code></pre>
+<hr>
+<h3 id="安装与配置jupyter-notebook">安装与配置jupyter notebook</h3>
+<h4 id="安装并配置远程访问">安装并配置远程访问</h4>
+<pre><code class="language-shell">$ conda install jupyter notebook
+</code></pre>
+<p>安装完成后生成配置文件：</p>
+<pre><code class="language-shell">$ jupyter notebook --generate-config      
+Writing default config to: /home/admin/.jupyter/jupyter_notebook_config.py
+</code></pre>
+<p>接着先生成登陆密码：</p>
+<pre><code class="language-shell">$ ipython
+Python 3.7.5 (default, Oct 25 2019, 15:51:11) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.9.0 -- An enhanced Interactive Python. Type '?' for help.
+</code></pre>
+<pre><code class="language-python">In [1]: from notebook.auth import passwd                                                            
+
+In [2]: passwd()                                                                                    
+Enter password: 
+Verify password: 
+Out[2]: 'sha1:f82d919b51bc:bc080b045f2bf8b5e8c41c8c5a3b84ff7c10c25c'
+
+In [3]: exit()
+</code></pre>
+<p>复制输出的那一段值。</p>
+<p>接着编辑配置文件：</p>
+<pre><code class="language-shell">$ sudo vim /home/admin/.jupyter/jupyter_notebook_config.py
+</code></pre>
+<pre><code>c.NotebookApp.allow_remote_access = True
+c.NotebookApp.allow_root = True
+c.NotebookApp.ip = '*'
+c.NotebookApp.notebook_dir = '/home/notebook'
+c.NotebookApp.open_browser = False
+c.NotebookApp.password = u'sha1:f82d919b51bc:bc080b045f2bf8b5e8c41c8c5a3b84ff7c10c25c'
+c.NotebookApp.port = 8888
+</code></pre>
+<p>至此，对阿里云服务器来说还未结束，如果访问<code>http://ip:8888</code>发现访问不了，这需要在“云服务器管理控制台”-&gt;“云服务器ECS”-&gt;“网络和安全”-&gt;“安全组”-&gt;“配置规则”添加安全组规则：</p>
+<figure data-type="image" tabindex="2"><img src="/images/2019/11/05/827a95b0-ff27-11e9-bbb2-eb0574b29c75.png" alt="image.png" loading="lazy"></figure>
+<p>之后举就可以正常访问了。</p>
+<hr>
+<h4 id="安装插件-使用主题">安装插件、使用主题</h4>
+<pre><code class="language-python">pip install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user
+pip install jupyterthemes  # 安装
+jt -t chesterish  # 使用chesterish主题（可能需要重启jupyter）
+jt -r  # 恢复默认主题
+</code></pre>
+<hr>
+<h4 id="后台运行">后台运行</h4>
+<p>但是你会发现这样不可以后台运行，退出以后就访问不了了。<br>
+这个时候一条命令就可以帮你解决问题。</p>
+<pre><code class="language-shell"># cofing 后面对应的刚开始的那个配置文件
+$ nohup jupyter notebook --config=/home/admin/.jupyter/jupyter_notebook_config.py  &gt; /dev/null 2&gt;&amp;1 &amp;
+</code></pre>
+<hr>
+<h3 id="设置快捷命令">设置快捷命令</h3>
+<p>设置别名，方便操作。在文件最后追加以下内容:</p>
+<pre><code class="language-shell">$ sudo vim ~/.zshrc
+</code></pre>
+<pre><code># alias for conda
+alias conl=&quot;conda env list&quot;
+alias conc=&quot;conda create -n&quot;
+alias cona=&quot;source activate&quot;
+alias cond=&quot;source deactivate&quot;
+alias conr=&quot;conda remove --all -n&quot;
+</code></pre>
+<hr>
+<h3 id="安装一些常用包">安装一些常用包</h3>
+<pre><code class="language-shell">$ conda install pandas numpy tensorflow opencv
+</code></pre>
+<hr>
+<h2 id="安装swagger">安装swagger</h2>
+<h3 id="安装准备">安装准备</h3>
+<p>安装swagger需要用到nodejs和npm，所以，在安装swagger前需要确认云服务器上已安装这两个。</p>
+<pre><code class="language-shell">$ node -v
+$ npm -v
+</code></pre>
+<p>若没有，则运行以下命令安装：</p>
+<pre><code class="language-shell">$ sudo yum install nodejs npm
+</code></pre>
+<p>然后再确认一下是否成功安装。</p>
+<hr>
+<h3 id="安装swagger-editor">安装swagger-editor</h3>
+<pre><code class="language-shell">$ git clone https://github.com/swagger-api/swagger-editor # 克隆swagger后端代码
+</code></pre>
+<p>启动swagger-editor部署</p>
+<pre><code class="language-shell">$ npm install -g http-server  # npm安装node.js  htpp服务器
+$ cd swagger-editor/   # 打开swagger后端目录
+$ http-server -p 8000  # 启动node.js服务器，端口8000
+</code></pre>
+<p>然后访问<code>http://ip地址:8000/</code>即可</p>
+<hr>
+<h3 id="安装swagger-ui">安装swagger-ui</h3>
+<pre><code class="language-shell">$ git clone https://github.com/swagger-api/swagger-ui   # 克隆swagger前端界面代码
+</code></pre>
+<p>启动swagger-ui部署</p>
+<pre><code class="language-shell">$ cd ..                # 返回上层目录
+$ mkdir swagger        # 创建 swagger目录
+$ cd swagger           # 打开 swagger目录
+$ touch package.json   # 创建 打包文件
+$ npm init package.json              # npm初始化，一路回车就好
+</code></pre>
+<pre><code class="language-shell">$ npm install express --save  # npm安装express 
+$ mkdir public                    # 创建public目录
+$ cp -r ../swagger-ui/dist/ public/ # 拷贝swagger-ui/dist到public目录
+$ touch index.js    # 创建index.js
+</code></pre>
+<pre><code class="language-shell">$ vim index.js
+</code></pre>
+<p>添加如下内容：</p>
+<pre><code class="language-js">var express = require('express');
+var http = require('http');
+var app = express();
+app.use('/static', express.static('public'));
+app.listen(8005, function () {
+  console.log('app listening on port 8005!');
+});
+</code></pre>
+<p>启动swagger-ui：</p>
+<pre><code class="language-shell">$ node index.js
+</code></pre>
+<p>访问:<code>http://ip地址:8005/static/dist/index.html</code></p>
+<hr>
+<h3 id="swagger进程驻留">swagger进程驻留</h3>
+<pre><code class="language-shell">$ nohup http-server -p 8000 swagger-editor 2&gt;&amp;1 &amp;
+$ nohup node index.js 2&gt;&amp;1 &amp;
+</code></pre>
+<p>有可能会驻留失败，反正我是失败了很多次，若反复尝试不行，那么可以试试：</p>
+<pre><code class="language-shell">$ sudo nohup http-server -p 8000 swagger-editor 2&gt;&amp;1 &amp;
+$ sudo nohup node index.js 2&gt;&amp;1 &amp;
+</code></pre>
+<p>然后</p>
+<pre><code class="language-shell">$ ps aux | grep node
+</code></pre>
+<p>将含有sudo的进程kill掉即可。</p>
+<hr>
+<h2 id="安装和配置nginx"><a href="https://qizhanming.com/blog/2018/08/06/how-to-install-nginx-on-centos-7">安装和配置nginx</a></h2>
+<h3 id="添加yum源">添加yum源</h3>
+<p>Nginx 不在默认的 yum 源中，可以使用 epel 或者官网的 yum 源，本例使用官网的 yum 源。</p>
+<pre><code class="language-shell">$ sudo rpm -ivh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+</code></pre>
+<hr>
+<h3 id="安装-5">安装</h3>
+<p>yum 安装 Nginx，非常简单，一条命令。</p>
+<pre><code class="language-shell">$ sudo yum install nginx
+</code></pre>
+<hr>
+<h3 id="配置-nginx-服务">配置 Nginx 服务</h3>
+<p>设置开机启动</p>
+<pre><code class="language-shell">$ sudo systemctl enable nginx
+</code></pre>
+<p>启动服务</p>
+<pre><code class="language-shell">$ sudo systemctl start nginx
+</code></pre>
+<p>停止服务</p>
+<pre><code class="language-shell">$ sudo systemctl restart nginx
+</code></pre>
+<p>重新加载，因为一般重新配置之后，不希望重启服务，这时可以使用重新加载。</p>
+<pre><code class="language-shell">$ sudo systemctl reload nginx
+</code></pre>
+<hr>
+<h3 id="反向代理">反向代理</h3>
+<p>Nginx 是一个很方便的反向代理，配置反向代理可以参考 <a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html">Module ngx_http_proxy_module</a> 。本文不做累述。</p>
+<p>需要指出的是 CentOS 7 的 SELinux，使用反向代理需要打开网络访问权限。</p>
+<pre><code class="language-shell">$ sudo setsebool httpd_can_network_connect 1 
+</code></pre>
+<p>打开网络权限之后，反向代理可以使用了。</p>
+<hr>
+<h2 id="一些常用配置">一些常用配置</h2>
+<p>安装gcc、c++编译器以及内核文件</p>
+<pre><code class="language-shell">$ sudo yum -y install gcc gcc-c++ kernel-devel
+</code></pre>
+<p>虚拟机上传下载组件( 支持从windows直接拖拽文件，相当好用)<br>
+rz+文件名 上传<br>
+sz+文件名 下载</p>
+<pre><code class="language-shell">$ sudo yum -y install lrzsz
+</code></pre>
+<p>#PCRE (Perl库，包括 perl 兼容的正则表达式库)</p>
+<pre><code class="language-shell">$ sudo yum -y install pcre pcre-devel
+</code></pre>
+<p>zlib (zlib库提供了很多种压缩和解压缩的方式)</p>
+<pre><code class="language-shell">$ sudo yum -y install zlib zlib-devel
+</code></pre>
+<p>openssl (OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及SSL协议)</p>
+<pre><code class="language-shell">$ sudo yum -y install openssl openssl-devel
+</code></pre>
+<p>安装wget下载工具</p>
+<pre><code class="language-shell">$ sudo yum -y install wget
+</code></pre>
+<p>使用systemctl自动补全服务名称( 因为CentOS7的默认安装类型是最小安装，所以默认没有自动补全的功能)</p>
+<pre><code class="language-shell">$ sudo yum -y install bash-completion
+</code></pre>
+<p>centos  64位系统兼容32位运行程序（aapt）</p>
+<pre><code class="language-shell">$ sudo yum -y install zlib.i686 libstdc++.i686
+</code></pre>
+<p>安装lsof（list open files）是一个列出当前系统打开文件的工具</p>
+<pre><code class="language-shell">$ sudo yum -y install lsof
+</code></pre>
+<p>zip unzip</p>
+<pre><code class="language-shell">$ sudo yum -y install zip unzip
+</code></pre>
+<p>make,clang</p>
+<pre><code class="language-shell">$ sudo yum -y install make clang
+</code></pre>
+<hr>
+<h2 id="安装升级docker客户端">安装／升级Docker客户端</h2>
+<p>Docker 要求 CentOS 系统的内核版本高于 3.10 ，查看本页面的前提条件来验证你的CentOS 版本是否支持 Docker 。</p>
+<pre><code class="language-shell">$ uname -r
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="/images/2019/11/25/7b63bdf0-0f86-11ea-8c78-c717f39ad5f6.png" alt="image.png" loading="lazy"></figure>
+<p>移除旧的版本：</p>
+<pre><code class="language-shell">$ sudo yum remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-selinux \
+                  docker-engine-selinux \
+                  docker-engine
+</code></pre>
+<p>安装一些必要的系统工具：</p>
+<pre><code class="language-shell">$ sudo yum -y install yum-utils device-mapper-persistent-data lvm2
+</code></pre>
+<p>更新 yum 缓存：</p>
+<pre><code class="language-shell">$ sudo yum makecache fast
+</code></pre>
+<p>安装 Docker：</p>
+<pre><code class="language-shell">$ sudo yum -y install docker
+</code></pre>
+<p>启动 Docker 后台服务</p>
+<pre><code class="language-shell">$ sudo systemctl start docker
+</code></pre>
+<p>加入开机自启动</p>
+<pre><code class="language-shell">$ sudo systemctl enable docker
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5">远程连接</a></li>
+<li><a href="#%E5%8D%87%E7%BA%A7%E7%B3%BB%E7%BB%9F">升级系统</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85redis">安装redis</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">配置远程访问</a></li>
+<li><a href="#%E5%BC%80%E5%90%AF%E6%9C%8D%E5%8A%A1%E5%B9%B6%E5%85%81%E8%AE%B8%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF">开启服务并允许开机自启</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85mysql">安装mysql</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-2">安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE">配置</a></li>
+<li><a href="#%E5%BC%80%E5%90%AF%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">开启远程访问</a></li>
+<li><a href="#%E5%BC%80%E5%90%AF%E6%9C%8D%E5%8A%A1%E5%B9%B6%E5%85%81%E8%AE%B8%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF-2">开启服务并允许开机自启</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85git%E5%8F%8A%E9%85%8D%E7%BD%AEssh%E5%AF%86%E9%92%A5%E8%BF%9E%E6%8E%A5github">安装git及配置SSH密钥连接Github</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85git">安装git</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AEgit%E8%B4%A6%E6%88%B7">设置git账户</a></li>
+<li><a href="#%E7%94%9F%E6%88%90ssh%E5%85%AC%E9%92%A5%E6%91%98%E8%87%AA%E7%BD%91%E7%BB%9C">生成SSH公钥(摘自网络)</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E7%9A%84ssh%E5%AF%86%E9%92%A5">创建新的SSH密钥</a></li>
+<li><a href="#%E5%9C%A8-gibhub-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BD%A0%E7%9A%84%E5%85%AC%E9%92%A5">在 GibHub 中添加你的公钥</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E6%B5%8B%E8%AF%95">连接测试</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85zsh">安装zsh</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-3">安装</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8zsh">启动zsh</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E6%98%BE%E7%A4%BA">启动显示</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9wsl%E9%87%8C%E9%9D%A2%E6%9F%A5%E7%9C%8Bwindows%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6%E7%9A%84%E9%A2%9C%E8%89%B2">修改wsl里面查看windows磁盘文件的颜色</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98">修改主题</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85jdk">安装jdk</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85miniconda">安装miniconda</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-4">安装</a></li>
+<li><a href="#%E6%8D%A2%E6%B8%85%E5%8D%8E%E6%BA%90">换清华源</a>
+<ul>
+<li><a href="#%E6%98%BE%E7%A4%BA%E6%89%80%E6%9C%89channel">显示所有channel</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%8F%AF%E7%94%A8%E7%9A%84%E6%B8%85%E5%8D%8E%E6%BA%90">添加可用的清华源</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AEjupyter-notebook">安装与配置jupyter notebook</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E5%B9%B6%E9%85%8D%E7%BD%AE%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">安装并配置远程访问</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6-%E4%BD%BF%E7%94%A8%E4%B8%BB%E9%A2%98">安装插件、使用主题</a></li>
+<li><a href="#%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C">后台运行</a></li>
+</ul>
+</li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E5%BF%AB%E6%8D%B7%E5%91%BD%E4%BB%A4">设置快捷命令</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E5%8C%85">安装一些常用包</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85swagger">安装swagger</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E5%87%86%E5%A4%87">安装准备</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85swagger-editor">安装swagger-editor</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85swagger-ui">安装swagger-ui</a></li>
+<li><a href="#swagger%E8%BF%9B%E7%A8%8B%E9%A9%BB%E7%95%99">swagger进程驻留</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AEnginx">安装和配置nginx</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0yum%E6%BA%90">添加yum源</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85-5">安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE-nginx-%E6%9C%8D%E5%8A%A1">配置 Nginx 服务</a></li>
+<li><a href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86">反向代理</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE">一些常用配置</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E5%8D%87%E7%BA%A7docker%E5%AE%A2%E6%88%B7%E7%AB%AF">安装／升级Docker客户端</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://blog.nonfin.studio/WSL-de-mei-hua-yu-kai-fa-huan-jing-de-pei-zhi/">
+              <h3 class="post-title">
+                WSL的美化与开发环境的配置
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.nonfin.studio/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
