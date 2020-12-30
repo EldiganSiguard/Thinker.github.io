@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>充分利用阿里云ECS（二）：私人网盘NextCloud | Thinker&#39;s Blog</title>
-<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1608708705609">
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1609345358662">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="充分利用阿里云ECS（二）：私人网盘NextCloud | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
@@ -21,7 +21,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://blog.nonfin.studio">
-  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1608708705609" alt="">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1609345358662" alt="">
   </a>
   <h1 class="site-title">
     Thinker&#39;s Blog
@@ -85,7 +85,7 @@
                 2020-12-21
               </span>
               <span>
-                4 min read
+                5 min read
               </span>
               
                 <a href="https://blog.nonfin.studio/nnNjuNuwZ/" class="post-tag">
@@ -179,6 +179,26 @@ $ docker pull nextcloud
 </ol>
 <p>这样在全部文件下就可以看到挂载的文件夹了（挂载了Album目录）：</p>
 <figure data-type="image" tabindex="4"><img src="https://cdn.jsdelivr.net/gh/PhoenixLjw/img@latest/blog-images/2020/12/22/753f5df9ae9490ffa71e19354751e0e8-image-20201222210321637-f34277.png" alt="image-20201222210321637" loading="lazy"></figure>
+<p>如果遇到“找不到smbclient”这样的问题，那么就需要进入docker容器中安装一下<code>smbclient</code>，具体过程如下：</p>
+<pre><code class="language-shell"># /etc/apt/sources.list，换阿里源，通过'echo &quot;xxx&quot; &gt; xxx'的方式写入
+deb http://mirrors.aliyun.com/debian/ buster main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib
+deb http://mirrors.aliyun.com/debian-security buster/updates main
+deb-src http://mirrors.aliyun.com/debian-security buster/updates main
+deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib
+deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib
+
+# 更新一下
+root# apt update &amp;&amp; apt dist-upgrade &amp;&amp; apt autoremove &amp;&amp; apt autoclean
+
+# 安装smbclient
+root# apt install smbclient libsmbclient-dev
+root# pecl install smbclient
+root# docker-php-ext-enable smbclient
+</code></pre>
+<p>之后退出并重启容器即可。</p>
 <p>更多操作可以自行探索，短暂的体验下来<code>NextCloud</code>还是挺不错的。</p>
 
               </div>
