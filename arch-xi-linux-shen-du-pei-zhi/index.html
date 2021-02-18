@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Arch系Linux深度配置 | Thinker&#39;s Blog</title>
-<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1609345358662">
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1613640672492">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="Arch系Linux深度配置 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
@@ -25,7 +25,7 @@ Manjaro D..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://blog.nonfin.studio">
-  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1609345358662" alt="">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1613640672492" alt="">
   </a>
   <h1 class="site-title">
     Thinker&#39;s Blog
@@ -769,6 +769,14 @@ index-url = https://pypi.tuna.tsinghua.edu.cn/simple
 </code></pre>
 <p>要使用gem的话需要在<code>$HOME/.zshrc</code>中加入：</p>
 <pre><code class="language-txt">PATH=&quot;$(ruby -e 'print Gem.user_dir')/bin:$PATH&quot;
+</code></pre>
+<p>gem切换国内镜像源：</p>
+<pre><code class="language-shell"># 添加 TUNA 源并移除默认源
+gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove https://rubygems.org/
+
+# 列出已有源
+gem sources -l
+# 应该只有 TUNA 一个
 </code></pre>
 <h5 id="docker">docker</h5>
 <pre><code class="language-shell">$ yay -S docker docker-compose

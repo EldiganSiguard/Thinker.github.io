@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Powershell美化与强化 | Thinker&#39;s Blog</title>
-<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1609345358662">
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1613640672492">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="Powershell美化与强化 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
@@ -24,7 +24,7 @@ scoo..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://blog.nonfin.studio">
-  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1609345358662" alt="">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1613640672492" alt="">
   </a>
   <h1 class="site-title">
     Thinker&#39;s Blog
@@ -88,7 +88,7 @@ scoo..." />
                 2019-11-25
               </span>
               <span>
-                11 min read
+                12 min read
               </span>
               
                 <a href="https://blog.nonfin.studio/nqZoB5T-tT/" class="post-tag">
@@ -103,8 +103,10 @@ scoo..." />
 <!--more-->
 <hr>
 <h2 id="scoopwindows下的强大包管理器">scoop|Windows下的强大包管理器</h2>
-<p>我们熟知的Ubuntu上的<code>apt-get</code>（在Ubuntu16以上可以直接用<code>apt</code>了），MacOS上的homebrew都是很优秀的包管理工具。</p>
-<p>但是在Windows平台下，由于Windows的开放性，大家都是去各种网站上下载程序，一些软件开发环境的程序也很杂乱，到处都是各种下载链接，容易中病毒还浪费时间。所以我们有开发者想要在Windows平台上开发包管理工具---scoop。</p>
+<h3 id="包管理器"><strong>包管理器</strong></h3>
+<p>包管理器（package manager）是开发人员常用的生产力工具，Ubuntu上的<code>Apt</code>和MacOS上的<code>Homebrew</code>等的使用都让开发环境的搭建变得无比丝滑。这里的包，可以理解成广义上的软件，不仅包含常见的基于图形用户界面（GUI）的软件，还包含基于命令行界面（CLI）的开发工具。简单说，包管理器就是一个软件自动化管理工具。</p>
+<p>如今，Windows也有了历经时间考验的包管理器：<code>Chocolatey</code>，<code>Scoop</code>和。其中，<code>Chocolatey</code>整个社区发布的安装脚本有3000多个，而<code>Scoop</code>官方仓库发布的安装脚本有2000多个。</p>
+<p>总的来看，上述两者各有长短。<code>Chocolatey</code>操作简单，涵盖大量 GUI 软件，但自定义程度低，适合普通程序员甚至没有编程基础的人使用；相比之下，<code>Scoop</code>自定义程度高，虽然默认涵盖的 GUI 软件少，但扩展性强，可以非常方便的自己定制安装脚本。适合有<strong>喜欢折腾的</strong>程序员使用。经过一定考量，我选择使用<code>Scoop</code>。</p>
 <h3 id="安装">安装</h3>
 <ol>
 <li>
@@ -146,8 +148,8 @@ uninstall  Uninstall an app
 update     Update apps, or Scoop itself
 which      Locate a program path
 
-# 设置代理(http)
-scoop config proxy 127.0.0.1:4412
+# 设置代理(http),port自行指定
+scoop config proxy 127.0.0.1:port
 </code></pre>
 <hr>
 <h3 id="安装软件">安装软件</h3>
@@ -168,9 +170,7 @@ scoop config proxy 127.0.0.1:4412
 </ul>
 <hr>
 <h3 id="bucket软件源">Bucket软件源</h3>
-<p>由于scoop比较小众，软件相比chocolatey较少<br>
-不过scoop有一个强大的bucket软件源策略，而且有社区来维护<br>
-常用软件基本能够找到</p>
+<p>由于scoop比较小众，软件相比chocolatey较少，不过scoop有一个强大的bucket软件源策略，而且有社区来维护，常用软件基本能够找到。</p>
 <ul>
 <li>
 <p>社区地址：</p>
@@ -192,22 +192,26 @@ scoop bucket add nerd-fonts
 scoop bucket add nonportable
 scoop bucket add java
 scoop bucket add games
-scoop bucket add jetbrains
+scoop bucket add jetbrains # 个人推荐通过jetbrains-toolbox安装管理
 </code></pre>
 <p><strong>国内常用软件：</strong><br>
-微信、QQ、钉钉……</p>
-<pre><code class="language-powershell">scoop bucket add dorado https://github.com/h404bi/dorado
+专注科研方向：</p>
+<pre><code class="language-powershell">scoop bucket add scoopet https://github.com/integzz/scoopet
 </code></pre>
+<p>scoopet 库包含的安装脚本分为如下四类：</p>
+<ul>
+<li>科研工具：如 miniconda（国内镜像），julia（国内镜像），copytranslator，gephi，geogebra，mendeley，netlogo</li>
+<li>开发辅助：如 cyberduck，virtualbox，vmware</li>
+<li>日常办公：如 adobe acrobat，wpsoffice，百度网盘，灵格斯词霸</li>
+<li>社交休闲：如 you-get，网易云音乐，微信</li>
+</ul>
 <p><strong>其他：</strong></p>
 <pre><code class="language-powershell">scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
 </code></pre>
 </li>
 </ul>
-<hr>
-<h3 id="关于包管理">关于包管理</h3>
-<p>Windows包关系体系目前还不算完善，scoop大部分软件属于国外，下载速度并不乐观，所以scoop的学习成本并不低。如果你爱折腾，相信这是一款使用后就会爱不释手的管理器</p>
-<h3 id="美化powershell"><a href="https://www.iszy.cc/2018/05/06/beautify-powershell/">美化Powershell</a></h3>
-<p>上面已经给出了我的应用列表，接下来把其中与Powershell美化相关的列出来。</p>
+<p>Windows包关系体系目前还不算完善，scoop大部分软件属于国外，下载速度并不乐观，所以scoop的学习成本并不低。当然也可以通过安装<code>aira2</code>进行加速，但是对于一些特别的软件还是得通过学习强国完成，因此会需要开/关<code>aria2</code>功能，比较麻烦。如果你爱折腾，相信这是一款使用后就会爱不释手的管理器。</p>
+<h3 id="美化powershell">美化Powershell</h3>
 <h4 id="安装-concfg">安装 <code>concfg</code></h4>
 <p><a href="https://github.com/lukesampson/concfg">lukesampson/concfg</a> 可以用来导入和导出 Windows 控制台的设置。</p>
 <pre><code class="language-powershell">scoop install concfg
@@ -219,6 +223,9 @@ scoop bucket add jetbrains
 <p>此时，<code>git</code> 的环境变量是设置在当前用户下的。如果需要设置在系统下，可以通过以下语句安装。需要使用 <code>sudo</code> 来提升权限。</p>
 <pre><code class="language-powershell">scoop install sudo
 sudo scoop install -g git
+</code></pre>
+<p>更新：现可通过<code>winget</code>安装：</p>
+<pre><code class="language-powershell">winget install Git
 </code></pre>
 <hr>
 <h4 id="安装-posh-git">安装 <code>posh-git</code></h4>
@@ -237,8 +244,6 @@ sudo scoop install -g git
 Install-Module oh-my-posh
 Install-Module -Name PSReadLine -Force -SkipPublisherCheck
 Install-Module Get-ChildItemColor -AllowClobber
-Install-Module WindowsConsoleFonts
-if (!(Test-Path -Path $PROFILE )) { New-Item -Type File -Path $PROFILE -Force }
 </code></pre>
 <hr>
 <h4 id="应用配置">应用配置</h4>
@@ -406,11 +411,11 @@ redis-server --service-uninstall
 <ul>
 <li><a href="#scoopwindows%E4%B8%8B%E7%9A%84%E5%BC%BA%E5%A4%A7%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8">scoop|Windows下的强大包管理器</a>
 <ul>
+<li><a href="#%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8"><strong>包管理器</strong></a></li>
 <li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
 <li><a href="#%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4">常用指令</a></li>
 <li><a href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6">安装软件</a></li>
 <li><a href="#bucket%E8%BD%AF%E4%BB%B6%E6%BA%90">Bucket软件源</a></li>
-<li><a href="#%E5%85%B3%E4%BA%8E%E5%8C%85%E7%AE%A1%E7%90%86">关于包管理</a></li>
 <li><a href="#%E7%BE%8E%E5%8C%96powershell">美化Powershell</a>
 <ul>
 <li><a href="#%E5%AE%89%E8%A3%85-concfg">安装 <code>concfg</code></a></li>
