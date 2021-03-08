@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Arch系Linux深度配置 | Thinker&#39;s Blog</title>
-<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1615179954283">
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1615184506694">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="Arch系Linux深度配置 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
@@ -25,7 +25,7 @@ Manjaro D..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://blog.nonfin.studio">
-  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1615179954283" alt="">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1615184506694" alt="">
   </a>
   <h1 class="site-title">
     Thinker&#39;s Blog
@@ -270,8 +270,6 @@ $ locale -a
 </ol>
 <p>先安装如下字体：</p>
 <pre><code class="language-shell">$ yay -S ttf-roboto noto-fonts ttf-dejavu
-# 文泉驿
-$ yay -S wqy-bitmapfont wqy-microhei wqy-microhei-lite wqy-zenhei
 # 思源字体
 $ yay -S noto-fonts-cjk adobe-source-han-sans-cn-fonts adobe-source-han-serif-cn-fonts
 # 更纱黑体
@@ -491,8 +489,8 @@ $ makepkg --skipchecksums
 <pre><code># powerlevel10k主题
 ZSH_THEME=&quot;powerlevel10k/powerlevel10k&quot;
 
-# 插件
-plugins=(git docker docker-compose zsh-syntax-highlighting zsh-autosuggestions zsh-completions autojump)
+# 插件，前五个为自带插件
+plugins=(git docker docker-compose extract sudo zsh-syntax-highlighting zsh-autosuggestions zsh-completions autojump)
 </code></pre>
 </li>
 <li>
