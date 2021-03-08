@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Arch系Linux深度配置 | Thinker&#39;s Blog</title>
-<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1613640672492">
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1615166150542">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="Arch系Linux深度配置 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
@@ -25,7 +25,7 @@ Manjaro D..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://blog.nonfin.studio">
-  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1613640672492" alt="">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1615166150542" alt="">
   </a>
   <h1 class="site-title">
     Thinker&#39;s Blog
@@ -89,7 +89,7 @@ Manjaro D..." />
                 2020-11-30
               </span>
               <span>
-                28 min read
+                29 min read
               </span>
               
                 <a href="https://blog.nonfin.studio/2n_5lb1ip/" class="post-tag">
@@ -522,16 +522,57 @@ $ echo &quot;source $ZSH_CUSTOM/plugins/incr/incr*.zsh&quot; &gt;&gt; ${ZDOTDIR:
 <hr>
 <h3 id="常用软件">常用软件</h3>
 <h4 id="中文输入法">中文输入法</h4>
-<p>RIME 中州韵输入法是 Linux 下广受好评的中文输入法，故选用fcitx+rime输入法：</p>
-<pre><code class="language-shell">$ yay -S fcitx-googlepinyin fcitx-im fcitx-configtool fcitx-rime fcitx-cloudpinyin fcitx-skin-material
+<p>安装fcitx5（输入法框架）：</p>
+<pre><code class="language-shell">$ yay -S fcitx5-im
 </code></pre>
-<p>然后修改配置文件：</p>
+<p>修改配置文件：</p>
 <pre><code class="language-shell">$ sudo vim ~/.xprofile
 </code></pre>
 <p>添加以下内容：</p>
-<pre><code>export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=&quot;@im=fcitx&quot;
+<pre><code>export GTK_IM_MODULE=fcitx5
+export QT_IM_MODULE=fcitx5
+export XMODIFIERS=&quot;@im=fcitx5&quot;
+</code></pre>
+<p>安装fcitx5-rime（输入法引擎）</p>
+<pre><code class="language-shell">$ yay -S fcitx5-rime
+</code></pre>
+<p>然后在输入法配置中启用“中州韵”；</p>
+<p>安装rime-cloverpinyin（输入方案）</p>
+<pre><code class="language-shell">$ yay -S rime-cloverpinyin
+</code></pre>
+<p>创建并写入rime-cloverpinyin的输入方案：</p>
+<pre><code class="language-shell">$ vim ~/.local/share/fcitx5/rime/default.custom.yaml
+</code></pre>
+<p>内容为：</p>
+<pre><code class="language-yaml">patch:
+  &quot;menu/page_size&quot;: 5
+  schema_list:
+    - schema: clover
+</code></pre>
+<p>安装中文维基百科词库：</p>
+<pre><code class="language-shell">$ yay -S fcitx5-pinyin-zhwiki-rime
+</code></pre>
+<p>（可选）配置主题：</p>
+<pre><code class="language-shell">$ yay -S fcitx5-material-color
+# 详情可看 https://github.com/hosxy/Fcitx5-Material-Color
+
+# 或者
+
+$ yay -S fcitx5-nord
+# 详情可看 https://github.com/ayamir/fcitx5-nord
+</code></pre>
+<p>然后修改配置文件 <code>~/.config/fcitx5/conf/classicui.conf</code>：</p>
+<pre><code># 垂直候选列表
+Vertical Candidate List=False
+
+# 按屏幕 DPI 使用
+PerScreenDPI=True
+
+# Font (设置成你喜欢的字体)
+Font=&quot;思源黑体 CN Medium 16&quot;
+
+# 主题(参考github具体配置)
+Theme=Nord-Light
 </code></pre>
 <hr>
 <h4 id="虚拟机">虚拟机</h4>
