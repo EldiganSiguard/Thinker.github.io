@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Arch系Linux深度配置 | Thinker&#39;s Blog</title>
-<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1615603304137">
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1616738142826">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="Arch系Linux深度配置 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
@@ -25,7 +25,7 @@ Manjaro D..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://blog.nonfin.studio">
-  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1615603304137" alt="">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1616738142826" alt="">
   </a>
   <h1 class="site-title">
     Thinker&#39;s Blog
@@ -89,7 +89,7 @@ Manjaro D..." />
                 2020-11-30
               </span>
               <span>
-                29 min read
+                30 min read
               </span>
               
                 <a href="https://blog.nonfin.studio/2n_5lb1ip/" class="post-tag">
@@ -455,6 +455,16 @@ $ makepkg --skipchecksums
 <p>由于墙的原因，可能会执行失败，请自行开代理或者改<code>hosts</code>解决。</p>
 <pre><code class="language-shell">$ wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
 </code></pre>
+<ul>
+<li>
+<p>另：<a href="https://github.com/starship/starship">starship</a>，精简、快速、可定制的Shell(bash/zsh/fish)命令提示符</p>
+<pre><code class="language-shell">$ yay -S starship
+</code></pre>
+<p>将如下信息加入到<code>~/.zshrc</code>末尾：</p>
+<pre><code>eval &quot;$(starship init zsh)&quot;
+</code></pre>
+</li>
+</ul>
 </li>
 <li>
 <p>安装<code>powerlevel10k</code>主题（官方主题中比较不错的有<code>ys</code>和<code>avit</code>）</p>
@@ -919,6 +929,18 @@ $ yay -S ncdu
 
 # 用户友好的man page
 $ yay -S tldr
+
+# ripgrep替换grep，速度更快，ripgrep-all是ripgrep的拓展，支持pdf检索
+$ yay -S ripgrep-all
+
+# fd替换find，更快的文件搜索工具
+$ yay -S fd
+
+# procs替换ps，输出信息更丰富
+$ yay -S procs
+
+# cloc/tokei，统计不同类型文件信息
+$ yay -S cloc tokei
 
 # 由社区投票贡献，以用例为主的帮助系统，需要先安装ruby
 $ gem install bropages
