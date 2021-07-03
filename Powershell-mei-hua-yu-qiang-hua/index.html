@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Powershell美化与强化 | Thinker&#39;s Blog</title>
-<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1617909142632">
+<link rel="shortcut icon" href="https://blog.nonfin.studio/favicon.ico?v=1625325216792">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.nonfin.studio/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="Powershell美化与强化 | Thinker&#39;s Blog - Atom Feed" href="https://blog.nonfin.studio/atom.xml">
@@ -24,7 +24,7 @@ scoo..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://blog.nonfin.studio">
-  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1617909142632" alt="">
+  <img class="avatar" src="https://blog.nonfin.studio/images/avatar.png?v=1625325216792" alt="">
   </a>
   <h1 class="site-title">
     Thinker&#39;s Blog
@@ -128,7 +128,7 @@ scoo..." />
 </ol>
 <hr>
 <h3 id="常用指令">常用指令</h3>
-<pre><code class="language-shell">alias      Manage scoop aliases
+<pre><code class="language-bash">alias      Manage scoop aliases
 bucket     Manage Scoop buckets
 cache      Show or clear the download cache
 checkup    Check for potential problems
@@ -182,20 +182,22 @@ scoop config proxy 127.0.0.1:port
 <li>
 <p>bucket源推荐：</p>
 <p><strong>官方：</strong></p>
-<pre><code class="language-powershell">scoop bucket add main
-scoop bucket add extras
-scoop bucket add versions
-scoop bucket add nightlies
-scoop bucket add nirsoft
-scoop bucket add php
-scoop bucket add nerd-fonts
-scoop bucket add nonportable
-scoop bucket add java
-scoop bucket add games
-scoop bucket add jetbrains # 个人推荐通过jetbrains-toolbox安装管理
+<pre><code class="language-bash">main # 默认bucket，安装scoop会自动添加
+extras # 最推荐，绝大多数软件可从本bucket找到
+versions
+nightlies # 不稳定版本，适合开发人员使用
+nirsoft
+php # 比较完整的PHP版本管理
+nerd-fonts # Nerd字体包，比较全
+nonportable # 安装版本应用，scoop默认是portbale应用
+java # 比较完整的Java版本管理
+games # 包含部分游戏以及模拟器
+jetbrains # 个人推荐通过jetbrains-toolbox安装管理
 </code></pre>
-<p><strong>国内常用软件：</strong><br>
-专注科研方向：</p>
+<p><strong>国内常用软件：</strong></p>
+<ol>
+<li>scoopet，国内大佬维护的科研方向软件源</li>
+</ol>
 <pre><code class="language-powershell">scoop bucket add scoopet https://github.com/integzz/scoopet
 </code></pre>
 <p>scoopet 库包含的安装脚本分为如下四类：</p>
@@ -205,7 +207,9 @@ scoop bucket add jetbrains # 个人推荐通过jetbrains-toolbox安装管理
 <li>日常办公：如 adobe acrobat，wpsoffice，百度网盘，灵格斯词霸</li>
 <li>社交休闲：如 you-get，网易云音乐，微信</li>
 </ul>
-<p><strong>其他：</strong></p>
+<ol start="2">
+<li>dodorz，某种程度算是extra的补充，偏国内应用</li>
+</ol>
 <pre><code class="language-powershell">scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
 </code></pre>
 </li>
